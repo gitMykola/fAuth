@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome
+  if userName == ""
+    b Guest
+  else
+    b #{userName}
+  p Read this: #{cont}
+  a(href="/auth/register") Sign Up
+  p #{sessionAuth}
