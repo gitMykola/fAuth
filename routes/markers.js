@@ -1,49 +1,16 @@
 var express = require('express'),
+    auth = require('../service/auth'),
     router = express.Router(),
-    model = 'markers'
-    Auth = function(req, res, next) {
-    if (req.headers.authorization && req.headers.authorization.search('Basic ') === 0) {
-        // fetch login and password
-        var strpw = req.headers.authorization.split(' ')[1].split(':');
-        const reqEmail = strpw[0];
-        const reqPwd = strpw[1];
-        var collection = req.db.get('users');
-        collection.findOne({'email':reqEmail},function(err,result){
-            if(result !== null && reqPwd == result.pwd){
-                req.session.auth = true;
-                req.session.user = result;
-                next();
-                //return;
-            }else{
-                console.log('Unable to authenticate user');
-                console.log(req.headers.authorization);
-                res.header('WWW-Authenticate', 'Basic realm="Restricted Area"');
-                res.send('Authentication required', 401);}
-        });
-    }else {
-        if(!req.session.auth) {
-            console.log('Unable to authenticate user');
-            console.log(req.headers.authorization);
-            res.header('WWW-Authenticate', 'Basic realm="Restricted Area"');
-            if (req.headers.authorization) {
-                setTimeout(function () {
-                    res.send('Authentication required', 401);
-                }, 2000);
-            } else {
-                res.send('Authentication required', 401);
-            }
-        }else next();
-    }
-};
+    model = 'markers';
 
 /* GET users listing. */
-router.get('/api/:id', Auth, function(req, res) {
+router.get('/api/:id', auth, function(req, res) {
     var collection = req.db.get(model);
     collection.find({'author': req.params.id},function(err,markers){
         res.json(markers);
     });
 });
-router.post('/api', Auth, function(req, res) {
+router.post('/api', auth, function(req, res) {
     var collection = req.db.get(model);
     console.dir(req.body);
     collection.findOne({'author': req.body.author},function(err,result) {
@@ -62,7 +29,7 @@ router.get('/api', function(req, res) {
     //collection.insert(req.body,function(err,user){res.json(user);});
     res.json({ok:'ok'});
 });
-router.delete('/api/:id', Auth, function(req, res) {
+router.delete('/api/:id', auth, function(req, res) {
     var collection = req.db.get(model);
     var authorId = req.params.id;
     collection.remove({author: authorId},eFunk);

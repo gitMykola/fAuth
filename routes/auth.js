@@ -1,42 +1,9 @@
 /**
  * Created by Nick on 24.07.2017.
  */
-    var express = require('express');
+    var express = require('express'),
     router = express.Router(),
-    Auth = function(req, res, next) {
-        if (req.headers.authorization && req.headers.authorization.search('Basic ') === 0) {
-            // fetch login and password
-            var strpw = req.headers.authorization.split(' ')[1].split(':');
-            const reqEmail = strpw[0];
-            const reqPwd = strpw[1];
-            var collection = req.db.get('users');
-            collection.findOne({'email':reqEmail},function(err,result){
-                if(result !== null && reqPwd == result.pwd){
-                    req.session.auth = true;
-                    req.session.user = result;
-                    next();
-                    //return;
-                }else{
-                    console.log('Unable to authenticate user');
-                    console.log(req.headers.authorization);
-                    res.header('WWW-Authenticate', 'Basic realm="Restricted Area"');
-                    res.send('Authentication required', 401);}
-            });
-        }else {
-            if(req.session.auth == false) {
-                console.log('Unable to authenticate user');
-                console.log(req.headers.authorization);
-                res.header('WWW-Authenticate', 'Basic realm="Restricted Area"');
-                if (req.headers.authorization) {
-                    setTimeout(function () {
-                        res.send('Authentication required', 401);
-                    }, 2000);
-                } else {
-                    res.send('Authentication required', 401);
-                }
-            }else next();
-        }
-    };
+    auth = require('../service/auth');
 
 //Authorization routes
 
@@ -68,18 +35,18 @@ router.get('/login',function(req,res,next){
     if(!req.session.auth)res.render('auth', { title: 'Enter', header: 'Enter:', action:"login"});
     else res.redirect('/');
 });
-router.post('/logout', Auth, function(req,res){
+router.post('/logout', auth, function(req,res){
     console.log('User '+ req.session.user.name +' logout.');
     req.session.auth = false;
     req.session.user = null;
     res.redirect('/');
 });
 
-router.post('/api', Auth, function(req,res){
+router.post('/api', auth, function(req,res){
     console.log('API user '+ req.session.user.name +' login.');
     res.json(req.session.user);
 });
-router.post('/api/logout', Auth, function(req,res){
+router.post('/api/logout', auth, function(req,res){
     console.log('API user '+ req.session.user.name +' logout.');
     req.session.auth = false;
     req.session.user = null;
