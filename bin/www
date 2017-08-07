@@ -5,14 +5,14 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('doit.f16.od.ua:server');
+var debug = require('debug')('facebookAuth:server');
 var http = require('http');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3031');
+var port = normalizePort(process.env.PORT || '3032');
 app.set('port', port);
 
 /**

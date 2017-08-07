@@ -4,9 +4,10 @@ var express = require('express'),
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var name = "";
+  var auth = false,name = "";
   if(req.session && req.session.user)name = req.session.user.name;
-  res.render('index', { appName: config.app.name , userName:name, sessionAuth:req.session.auth});
+  if(req.session.auth && req.session.auth.state)auth = true;
+  res.render('index', { appName: config.app.name , userName:name, sessionAuth:auth});
 });
 
 module.exports = router;
