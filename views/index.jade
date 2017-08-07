@@ -1,12 +1,6 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome
-  if userName == ""
-    b Guest
-  else
-    b #{userName}
-  p Read this: #{cont}
-  a(href="/auth/register") Sign Up
-  p #{sessionAuth}
+
+  div(class="start-block col-sm-12")
+    div(class="col-sm-6 col-sm-offset-3")

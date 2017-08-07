@@ -3,53 +3,52 @@
  */
     var express = require('express'),
     router = express.Router(),
-    auth = require('../service/auth');
+    config = require('../service/config'),
+    auth = require('../service/auth'),
+    user = require('../models/User');
 
 //Authorization routes
 
-
 router.get('/register',function(req,res,next){
-    if(!req.session.auth)res.render('auth', { title: 'Sign Up', header: 'Sign Up:', action:"register", sessionAuth:req.session.auth});
-    else res.redirect('/');
+    if(req.session && req.session.auth && req.session.auth.state)res.json({err:null,user:req.session.user});
+    else res.render('auth', { appName: config.app.name,
+                            title: 'Sign Up',
+                            header: 'Sign Up:',
+                            userName: '',
+                            action:"register",
+                            sessionAuth:false});
 });
-router.post('/register',function(req,res) {
-    if(!req.session.auth) {
-        var collection = db.get('users');
-        var user = collection.find({email: req.body.email});
-        if (user._id == undefined) {
-            collection.insert(req.body, function (err, result) {
-                if (result.length) {
-                    req.session.user = result[0];
-                    req.session.auth = true;
-                    res.redirect('/');
-                }
-                var msg = (err === null) ? req.body.name + ' sined Up!' : 'Error: ' + err;
-                res.render('auth', {header: msg, sessionAuth: req.session.auth});
-            });
-        } else {
-            res.render('auth', {header: "User email: " + req.body.email + " exist! Try another one." + user.toString()});
-        }
-    }else res.redirect('/');
+router.post('/register', function(req,res) {
+    if(req.session && req.session.auth && req.session.auth.state) res.json({err:null,user:req.session.user});
+    else user.setUser(req.body, res, function(err,user){
+        if(err) console.log('User '+ req.body.name +" don't registered. Error " + err);
+        else console.log('User '+ user.name +' registered.');
+        res.json({err:err,user:user})
+        });
 });
 router.get('/login',function(req,res,next){
-    if(!req.session.auth)res.render('auth', { title: 'Enter', header: 'Enter:', action:"login"});
-    else res.redirect('/');
+    res.render('auth', {appName: config.app.name,
+                        title: 'Login',
+                        header: 'Login:',
+                        userName: '',
+                        action:"login"});
 });
-router.post('/logout', auth, function(req,res){
-    console.log('User '+ req.session.user.name +' logout.');
-    req.session.auth = false;
-    req.session.user = null;
-    res.redirect('/');
+router.post('/login', auth, function(req,res){
+    console.log('User '+ req.session.user.name +' login.');
+    res.json({err:null, user:req.session.user});
+});
+router.get('/logout', auth, function(req,res){
+    if(req.session && req.session.auth)
+    {
+        console.log('User ' + req.session.user.name + ' logout.');
+        req.session.auth = null;
+        req.session.user = null;
+    }
+    res.render('index', { appName: config.app.name,
+                            cont: 'Db fbAuth',
+                            userName:"",
+                            sessionAuth:req.session.auth});
 });
 
-router.post('/api', auth, function(req,res){
-    console.log('API user '+ req.session.user.name +' login.');
-    res.json(req.session.user);
-});
-router.post('/api/logout', auth, function(req,res){
-    console.log('API user '+ req.session.user.name +' logout.');
-    req.session.auth = false;
-    req.session.user = null;
-    res.send({'msg':'logout ok'});
-});
+
 module.exports = router;

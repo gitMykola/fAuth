@@ -2,41 +2,25 @@ var express = require('express'),
     router = express.Router(),
     model = 'users',
     auth = require('../service/auth');
-
+    user = require('../models/User');
 
 /* GET users listing. */
-router.get('/api/', auth, function(req, res) {
-    var collection = req.db.get(model);
-    collection.find({},function(err,users){
-      res.json(users);
+router.get('/', auth, function(req, res)
+{
+    user.getAllUsers(res, function(err,users){
+        console.log('Send All users. Error '+ err);
+        res.json({err:err,users:users});
+    })
+});
+router.get('/:id', auth, function(req, res)
+{
+    user.getUserById(req.params.id, res, function(err,user){
+        console.log('Send user '+ user.name +'. Error '+ err);
+        res.json({err:err,user:user});
     });
 });
-router.get('/api/:id', auth, function(req, res) {
-    var collection = req.db.get(model);
-    var userId = req.params.id;
-    collection.find({'_id':userId},function(err,user){
-      res.json(user);
-    });
-});
-router.post('/api/', auth, function(req, res) {
-    var collection = req.db.get(model);
-    collection.insert(req.body,function(err,user){
-        res.json(user);
-    });
-});
-router.put('/api/:id', auth, function(req, res) {
-    var collection = req.db.get(model);
-    var userId = req.params.id;
-    collection.update({'_id': userId},req.body,function(err,user){
-        res.json(user);
-    });
-});
-router.delete('/api/:id', auth, function(req, res) {
-    var collection = req.db.get(model);
-    var userId = req.params.id;
-    collection.remove({'_id':userId},function(err){
-        res.json(err);
-    });
-});
+router.post('/', auth, function(req, res) {user.setUser(req.body, res)});
+router.put('/:id', auth, function(req, res) {user.updateUser(req.params.id, req.body, res)});
+router.delete('/:id', auth, function(req, res) {user.deleteUser(req.params.id, res)});
 
 module.exports = router;

@@ -5,25 +5,39 @@
 extends layout
 
 block content
-            h2 #{header}
+            h2(class="col-sm-12 text-center") #{header}
+            h3(class="col-sm-12 text-center" id="alarm")
             if action == "register"
-                #signUp
-                    form(method="post" action="/auth/register")
-                        input#inputUserName(type='text', placeholder='Name',name="name")
-                        input#inputUserEmail(type='email', placeholder='Email',name="email")
-                        br
-                        input#inputUserPwd(type='password', placeholder='password',name="pwd")
-                        input#inputUserConfirmPwd(type='password', placeholder='confirm password')
-                        br
-                        button#btnAddUser Sign Up
-                a(href="/") Home
+                div(id="signUp" class="col-sm-12")
+                    div(class="form-style col-sm-6 col-sm-offset-3")
+                        form(method="post" action="" id="signForm")
+                            div(class="form-group")
+                                label(for="name") Name
+                                input(class="form-control" id="inputUserName" type='text', placeholder='Name',name="name")
+                            div(class="form-group")
+                                label(for="email") Email
+                                input(class="form-control" id="inputUserEmail" type='text', placeholder='Email',name="email")
+                            div(class="form-group")
+                                label(for="pwd") Password
+                                input(class="form-control" id="inputUserPwd" type='password', placeholder='password',name="pwd")
+                            div(class="form-group")
+                                label(for="cpwd") Confirm password
+                                input(class="form-control" id="inputUserConfirmPwd" type='password', placeholder='confirm password', name="cpwd")
+                            div(class="form-group")
+                                button(class="btn btn-default" id="btnAddUser") Sign Up
             else
-                #enter
-                    form(method="post" action="/auth/login")
-                        input#inputUserEmail(type='email', placeholder='Email',name="email")
-                        br
-                        input#inputUserPwd(type='password', placeholder='password',name="pwd")
-                        br
-                        button#btnAddUser Enter
-                a(href="/") Home
+                div(id="login" class="col-sm-12")
+                    div(class="form-style col-sm-6 col-sm-offset-3")
+                        form(method="post" action="" id="signForm")
+                            div(class="form-group")
+                                label(for="email") Email
+                                input(class="form-control" id="inputUserEmail" type='text', placeholder='Email',name="email")
+                            div(class="form-group")
+                                label(for="pwd") Password
+                                input(class="form-control" id="inputUserPwd" type='password', placeholder='password',name="pwd")
+                            div(class="form-group")
+                                button(class="btn btn-default" id="btnAddUser") Login
+                                div(class="btn btn-default" id="btnFaceBook") Login with FaceBook
             p #{sessionAuth}
+            script( src="/scripts/login.js")
+            script( src='/scripts/fbApi.js')
