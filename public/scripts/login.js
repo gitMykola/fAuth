@@ -11,7 +11,7 @@ document.getElementById('signForm').addEventListener('submit', function (e) {
     }
     if(!verify(data)) return false;
     if(data.cpwd)data.cpwd = null;
-        var href, host = 'http://localhost:3032';
+        var href, host = 'http://178.20.156.221:3032';
         host += (inputs.length > 2) ? '/auth/register' : '/auth/login';
         href = (inputs.length > 2) ? '/auth/login' : '/';
         var xhttp = new XMLHttpRequest();
