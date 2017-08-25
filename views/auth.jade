@@ -39,5 +39,10 @@ block content
                                 button(class="btn btn-default" id="btnAddUser") Login
                                 div(class="btn btn-default" id="btnFaceBook") Login with FaceBook
             p #{sessionAuth}
+            div(id="fb-root")
+            div(class="fb-share-button" data-href="http://profee.club" data-layout="button_count" data-size="small" data-mobile-iframe="true")
+                a(class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fprofee.club%2F&amp;src=sdkpreparse") Share
+            button(class="btn btn-default" id="btnETH") ETH
+            div(id="ethInfo")
             script( src="/scripts/login.js")
             script( src='/scripts/fbApi.js')
