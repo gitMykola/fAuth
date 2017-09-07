@@ -112,6 +112,22 @@ function apiFriends(e, at)
 function testETH(e)
 {
     e.preventDefault();
+    let host = 'http://www.coincap.io/history/1day/ETH';
+    let xhttp = new XMLHttpRequest();
+    let data = null;
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            //console.dir(this.responseText);
+            data = JSON.parse(this.responseText);
+            console.dir(data);
+        }
+    };
+        xhttp.open("GET", host, true);
+        xhttp.send();
+}
+function testETHi(e)
+{
+    e.preventDefault();
     let host = 'http://btc.blockr.io/api/v1/coin/info';
     let xhttp = new XMLHttpRequest();
     let data = null;
