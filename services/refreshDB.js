@@ -6,13 +6,13 @@ let monk = require('monk'),
 
 process.on('message', (msg) => {
     console.log('Message from parent:', msg);
-    //start();
+    start();
 });
 
 let counter = 0;
 
-setInterval(() => {
-//function start(){
+//setInterval(() => {
+function start(){
     process.send({ counter: counter++ });
     provider.marketsToDB();
-}, 60*60*24*1000);
+}//, 60*60*24*1000);

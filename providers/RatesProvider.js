@@ -77,7 +77,7 @@ module.exports = class RatesProvider{
                         .then((resl) => {
                         if (resl) {}//console.log(resl._id.toString());
                         else collection.insert(data[i]).then((r) => {
-                            console.log(r);
+                            //console.log(r);
                         });
                     });
                 }
@@ -86,14 +86,14 @@ module.exports = class RatesProvider{
                     {
                         //if(1 || data[i].close * 0.03 < Math.abs(data[i-1].close - data[i].close))
                         //{
-                            let waitTill = new Date(new Date().getTime() + 500);
+                            let waitTill = new Date(new Date().getTime() + 1000);
                             while(waitTill > new Date()){}
 
                             market_1(pair,'H1', data[i].time,(result,err)=>{
                                 if(err)console.log(err);
                                 else{
                                     const h1Data = result.data;
-                                    console.log(i+' '+h1Data.length);
+                                    console.log(i+' '+h1Data.length +' hours');
                                     const h1Collection = db.get('H1');
                                     for(let i = 0;i < h1Data.length; i++)
                                     {
@@ -111,9 +111,9 @@ module.exports = class RatesProvider{
                                     //console.log(result.data);
                                 }
                             });
-                            console.log(data[i].close + ' ' + data[i+1].close
+                            /*console.log(data[i].close + ' ' + data[i+1].close
                                 + ' ' + Math.round(Math.abs(data[i+1].close - data[i].close))
-                                + ' ' + Math.round(data[i].close * 0.03));
+                                + ' ' + Math.round(data[i].close * 0.03));*/
                             console.log(new Date(data[i].time*1000));
                             console.log(' '+i);
                         //}
@@ -121,8 +121,8 @@ module.exports = class RatesProvider{
                     }
                 }
             });
-        pair = 'ETH-USD';
-        market_1(pair,'D1', 0,(result,err) => {
+        let pair2 = 'ETH-USD';
+        market_1(pair2,'D1', 0,(result,err) => {
             if(err)console.log(err);
             else {
                 const data = result.data;
@@ -135,7 +135,7 @@ module.exports = class RatesProvider{
                         .then((resl) => {
                             if (resl) {}//console.log(resl._id.toString());
                             else collection.insert(data[i]).then((r) => {
-                                console.log(r);
+                                //console.log(r);
                             });
                         });
                 }
@@ -147,11 +147,11 @@ module.exports = class RatesProvider{
                     let waitTill = new Date(new Date().getTime() + 500);
                     while(waitTill > new Date()){}
 
-                    market_1(pair,'H1', data[i].time,(result,err)=>{
+                    market_1(pair2,'H1', data[i].time,(result,err)=>{
                         if(err)console.log(err);
                         else{
                             const h1Data = result.data;
-                            console.log(i+' '+h1Data.length);
+                            console.log(i+' '+h1Data.length + ' hours');
                             const h1Collection = db.get('H1');
                             for(let i = 0;i < h1Data.length; i++)
                             {
@@ -161,7 +161,7 @@ module.exports = class RatesProvider{
                                     .then((resl) => {
                                         if (resl) {}//console.log(resl._id.toString());
                                         else h1Collection.insert(h1Data[i]).then((r) => {
-                                            console.log(r);
+                                            //console.log(r);
                                         });
                                     });
                             }
@@ -169,9 +169,9 @@ module.exports = class RatesProvider{
                             //console.log(result.data);
                         }
                     });
-                    console.log(data[i].close + ' ' + data[i+1].close
-                        + ' ' + Math.round(Math.abs(data[i+1].close - data[i].close))
-                        + ' ' + Math.round(data[i].close * 0.03));
+                    //console.log(data[i].close + ' ' + data[i+1].close
+                    //    + ' ' + Math.round(Math.abs(data[i+1].close - data[i].close))
+                    //    + ' ' + Math.round(data[i].close * 0.03));
                     console.log(new Date(data[i].time*1000));
                     console.log(' '+i);
                     //}

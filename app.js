@@ -13,7 +13,7 @@ var api = require('./routes/api_1_0');
 var app = express();
 
 const { fork } = require('child_process');
-
+/*
 const refDB = fork('./services/refreshDB');
 
 refDB.on('message', (msg) => {
@@ -22,7 +22,7 @@ refDB.on('message', (msg) => {
 });
 
 refDB.send('Start refresh DB.');
-
+*/
 const ref30 = fork('./services/refresh30Day');
 global.data30 = {'BTC-USD':[],
                  'ETH-USD':[]};
