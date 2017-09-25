@@ -16,19 +16,19 @@
 # 
     Test url http://profee.club/
 #   Api:
-/api/v1.0/{:pair}
-    Close price for last 30 days
-    Example: GET request to http://profee.club/api/v1.0/BTC-USD
-    response:
-      error = Strimg || null,
-      data  = Array(
-            date = YYYY-MM-DD,
-            priceClose = Decimal,
-            hour = if close price differency more then 3% beetwin current and previos days 
-                Array(date = YYYY-MM-DD,
-                priceClose = Decimal)
-            else null
-        ) || null.
+/api/v1.0/{:pair}<br>
+    Close price for last 30 days<br>
+    Example: GET request to http://profee.club/api/v1.0/BTC-USD<br>
+    response:<br>
+      error = Strimg || null,<br>
+      data  = Array(<br>
+            date = YYYY-MM-DD,<br>
+            priceClose = Decimal,<br>
+            hour = if close price differency more then 3% beetwin current and previos days <br>
+                Array(date = YYYY-MM-DD,<br>
+                priceClose = Decimal)<br>
+            else null<br>
+        ) || null.<br>
 #   Currencies pairs:
-BTC-USD
+BTC-USD<br>
 ETH-USD
