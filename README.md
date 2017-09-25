@@ -18,10 +18,17 @@
 #   Api:
 /api/v1.0/{:pair}
     Close price for last 30 days
-    Example: GET request with endpoint http://profee.club/api/v1.0/BTC-USD
+    Example: GET request to http://profee.club/api/v1.0/BTC-USD
     response:
       error = Strimg || null,
       data  = Array(
             date = YYYY-MM-DD,
             priceClose = Decimal,
+            hour = if close price differency more then 3% beetwin current and previos days 
+                Array(date = YYYY-MM-DD,
+                priceClose = Decimal)
+            else null
         ) || null.
+#   Currencies pairs:
+BTC-USD
+ETH-USD
