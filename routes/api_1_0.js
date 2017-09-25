@@ -4,7 +4,7 @@ let express = require('express'),
 
 /* GET rates. */
 router.get('/:pair', function(req, res) {
-    provider.getRates(res, req.params.pair);
+    res.json(global.data30[req.params.pair]);
 });
 
 module.exports = router;

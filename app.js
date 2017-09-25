@@ -12,6 +12,32 @@ var api = require('./routes/api_1_0');
 
 var app = express();
 
+const { fork } = require('child_process');
+
+const refDB = fork('./services/refreshDB');
+
+refDB.on('message', (msg) => {
+    console.log('Message from child DB ', msg.counter);
+    global.data = msg.counter;
+});
+
+refDB.send('Start refresh DB.');
+
+const ref30 = fork('./services/refresh30Day');
+global.data30 = {'BTC-USD':[],
+                 'ETH-USD':[]};
+
+ref30.on('message', (msg) => {
+    console.log('Message from child 30Day');
+    global.data30[msg.pair].push(msg.data);
+    global.data30[msg.pair].sort(function(a, b){return parseInt(b.time) - parseInt(a.time)});
+});
+
+ref30.send('Start refresh 30Day');
+
+
+provider = new require('./providers/RatesProvider');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -28,6 +54,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/api/v1.0', api);
 //app.use('/users', users);
+
+//provider.getRatesToDB('BTC-USD');
+//provider.marketsToDB();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
