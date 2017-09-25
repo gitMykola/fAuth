@@ -20,15 +20,15 @@
     Close price for last 30 days<br>
     Example: GET request to http://profee.club/api/v1.0/BTC-USD<br>
     response:<br>
-      error = Strimg || null,<br>
-      data  = JSON Array(...{<br>
+      error = Strimg error description,<br>
+      or JSON Array(...{<br>
             date = YYYY-MM-DD,<br>
             priceClose = Decimal,<br>
             hour = if close price differency more then 3% beetwin current and previos days <br>
                 JSON Array(...{date = YYYY-MM-DD,<br>
                 priceClose = Decimal}...)<br>
             else null<br>
-        	}...) || null.<br>
+        	}...) .<br>
 #   Currencies pairs:
 BTC-USD<br>
 ETH-USD<br>
