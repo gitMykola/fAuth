@@ -11,8 +11,8 @@ process.on('message', (msg) => {
 
 let counter = 0;
 
-//setInterval(() => {
+setInterval(() => start(), 60*60*24*1000);
 function start(){
     process.send({ counter: counter++ });
     provider.marketsToDB();
-}//, 60*60*24*1000);
+};
