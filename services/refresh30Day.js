@@ -10,8 +10,9 @@ process.on('message', (msg) => {
 
 let counter = 0;
 
-//setInterval(() => {
+setInterval(() => start(),60*60*24*1000);
 function start(){
+    process.send({start:true});
     counter++;
     console.log('Starting ' + counter);
     const collection = db.get('D1');
@@ -100,4 +101,4 @@ function start(){
             }
             process.send({pair:pair2, data:data[data.length - 1]});
         });
-}//, 60*60*24*1000);
+};

@@ -10,4 +10,8 @@ module.exports = {
         name:'cryptoApi',
         privateKey:'23gqwSE8vD)(*$J',
     },
+    pairs:[
+        'BTC-USD','BTC-EUR',
+        'ETH-USD','ETH-EUR'
+    ]
 };

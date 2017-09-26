@@ -16,7 +16,7 @@ module.exports = class RatesProvider{
             req.onerror = (e) => reject(console.dir(`Network Error: ${e}`));
             req.send();
         });
-    };
+    };/*
     static set30Days(res){};
     static getRates(pair, next){
         //console.log('API request processing...');
@@ -60,7 +60,7 @@ module.exports = class RatesProvider{
                 console.log('GDAX Error.');//https://min-api.cryptocompare.com/data/histoday?fsym=BTC&tsym=USD&limit=30&aggregate=1
                 res.json({error: "Market Error.",data: null});
             });
-    }
+    }*/
     static marketsToDB(){
         console.log('markets to DB ...');
         let pair = 'BTC-USD';
