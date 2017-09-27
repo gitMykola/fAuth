@@ -12,7 +12,6 @@ setInterval(() => start(),60*60*24*1000);
 
 function start(){
     process.send({start:true});
-    console.log('Starting ' + counter);
     const collection = db.get('D1');
     const date = new Date();
     let pair = 'BTC-USD';
