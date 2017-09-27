@@ -59,7 +59,7 @@ module.exports = class RatesProvider{
                                             .then((resl) => {
                                             if (resl) {}//console.log(resl._id.toString());
                                             else h1Collection.insert(h1Data[i]).then((r) => {
-                                                console.log(r);
+                                                //console.log(r);
                                             });
                                         });
                                     }

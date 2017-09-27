@@ -11,35 +11,7 @@ var api = require('./routes/api_1_0');
 //var users = require('./routes/users');
 
 var app = express();
-
-const { fork } = require('child_process');
-/*
-const refDB = fork('./services/refreshDB');//Don't forget set FULL PATH to PRODACTION!!!
-
-refDB.on('message', (msg) => {
-    console.log('Message from child DB ', msg.counter);
-    global.data = msg.counter;
-});
-
-refDB.send('Start refresh DB.');
-*/
-const ref30 = fork('./services/refresh30Day');//Don't forget set FULL PATH to PRODACTION!!!
-global.data30 = {'BTC-USD':['Starting...'],
-                 'ETH-USD':['Starting...']};
-
-ref30.on('message', (msg) => {
-    console.log('Message from child 30Day');
-    if(msg.start)global.data30 = {'BTC-USD':[], 'ETH-USD':[]};
-    else{
-        global.data30[msg.pair].push(msg.data);
-        global.data30[msg.pair].sort(function(a, b){return parseInt(b.time) - parseInt(a.time)});
-    }
-});
-
-ref30.send('Start refresh 30Day');
-
-
-provider = new require('./providers/RatesProvider');
+let startProcess = require('./services/start');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -58,8 +30,8 @@ app.use('/', index);
 app.use('/api/v1.0', api);
 //app.use('/users', users);
 
-//provider.getRatesToDB('BTC-USD');
-//provider.marketsToDB();
+// Starting database & global object data refreshing process
+startProcess();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
