@@ -1,8 +1,8 @@
 let express = require('express'),
     router = express.Router(),
     model = 'users',
-    auth = require('../services/auth');
-user = require('../models/User');
+    auth = require('../services/auth'),
+    user = require('../models/User');
 
 /* GET users listing. */
 router.get('/', auth, function(req, res)

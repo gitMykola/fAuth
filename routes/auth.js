@@ -20,11 +20,14 @@ router.get('/register',function(req,res,next){
 });
 router.post('/register', function(req,res) {
     if(req.session && req.session.auth && req.session.auth.state) res.json({err:null,user:req.session.user});
-    else user.setUser(req.body, res, function(err,user){
+    else {
+        console.dir(req.body);
+        user.setUser(req.body, res, function(err,user){
         if(err) console.log('User '+ req.body.name +" don't registered. Error " + err);
         else console.log('User '+ user.name +' registered.');
         res.json({err:err,user:user})
-    });
+        });
+    }
 });
 router.get('/login',function(req,res,next){
     res.render('auth', {appName: config.app.name,
@@ -41,13 +44,12 @@ router.get('/logout', auth, function(req,res){
     if(req.session && req.session.auth)
     {
         console.log('User ' + req.session.user.name + ' logout.');
-        req.session.auth = null;
-        req.session.user = null;
+        req.session.destroy();
     }
     res.render('index', { appName: config.app.name,
-        cont: 'Db fbAuth',
+        cont: config.app.name,
         userName:"",
-        sessionAuth:req.session.auth});
+        sessionAuth:false});
 });
 
 

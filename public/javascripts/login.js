@@ -11,7 +11,7 @@ document.getElementById('signForm').addEventListener('submit', function (e) {
     }
     if(!verify(data)) return false;
     if(data.cpwd)data.cpwd = null;
-    let href, host = 'http://localhost:3032';
+    let href, host = 'http://localhost:3000';// Dont forget SETUP SERVER PORT!!!!!!!!!!!!!!!!!
     host += (inputs.length > 2) ? '/auth/register' : '/auth/login';
     href = (inputs.length > 2) ? '/auth/login' : '/';
     let xhttp = new XMLHttpRequest();

@@ -5,7 +5,7 @@ module.exports = function (pair, period, time, next) {
             case 'D1': {
                 console.log('GDAX D1 processing...');
                 let dateFinish = new Date();
-                let dateStart = new Date(dateFinish - 60 * 60 * 24 * 30  * 1000);
+                let dateStart = new Date(dateFinish - 60 * 60 * 24 * 3  * 1000);
                 dateFinish = dateFinish.getFullYear() + '-' + (dateFinish.getMonth() + 1) + '-' + dateFinish.getDate();
                 dateStart = dateStart.getFullYear() + '-' + (dateStart.getMonth() + 1) + '-' + dateStart.getDate();
                 const url = 'https://api.gdax.com/products/' + pair + '/candles?start="' + dateStart + '"&end="' + dateFinish + '"&granularity=86400';

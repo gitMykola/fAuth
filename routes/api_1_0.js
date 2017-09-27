@@ -8,5 +8,14 @@ router.get('/:pair', function(req, res) {
     res.json((data && data.length)?data
         :{error:'No '+ req.params.pair +' data.'});
 });
+/* Accounts
+* @method API createAccount
+* @params req.body{id:String(MongoDB),
+*                  passfrase:String(8..16),
+*                  currency:String(3)}
+* @return {String} Account address
+*/
+router.post('/createAccount',(req, res)=>{
 
+});
 module.exports = router;

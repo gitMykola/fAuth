@@ -31,7 +31,7 @@ function Auth(req,res,next){
     }
     else
     {
-        if(req.session && req.session.auth && req.session.auth.state && req.session.user !== undefined) next();
+        if(req.session && req.session.auth.state && req.session.user !== undefined) next();
         else{
             console.log('Unable to authenticate user.');
             setTimeout(function () {

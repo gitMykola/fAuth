@@ -15,8 +15,6 @@ module.exports =
         {
             db.get(this.collectionName).findOne({'_id':id},function(err,user){
                 next(err,(err)?null:user);
-                /*if(err) res.status(200).send({err:err, data:null});
-                else res.status(200).send({err:null, data:users});*/
             });
         },
         getUserByEmail: function(email,res,next)
@@ -24,8 +22,6 @@ module.exports =
             if(this.validateData({email:email}))
                 db.get(this.collectionName).findOne({'email':email},function(err,user){
                     next(err,err?null:user);
-                    /*if(err) res.status(200).send({err:err, data:null});
-                     else res.status(200).send({err:null, data:users});*/
                 });
             else next('Invalid email: ' + email,null);
         },
@@ -34,8 +30,6 @@ module.exports =
             console.log('getAll');
             db.get(this.collectionName).find({},function(err,users){
                 next(err,(err)?null:users);
-                /*if(err) res.send({err:err, data:null});
-                else res.send({err:null, data:users});*/
             });
         },
         setUser: function(data,res,next)
@@ -56,8 +50,6 @@ module.exports =
             {
                 db.get(this.collectionName).insert({'_id':id},data,function(err,user){
                     next(err,user);
-                    /*if (err) res.send({err:err});
-                    res.send({err:null, data:users});*/
                 });
             }else res.send({err:'Data invalid!'});
         },
@@ -65,8 +57,6 @@ module.exports =
         {
             db.get(this.collectionName).delete({'_id':id},function(err,user){
                 next(err,user);
-                /*if(err) res.send({err:err});
-                else res.send({err:null});*/
             });
         },
         validateData: function(data)

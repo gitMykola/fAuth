@@ -9,6 +9,9 @@ module.exports = {
     app:{
         name:'cryptoApi',
         privateKey:'23gqwSE8vD)(*$J',
+        cookieLife:1000*60*60*24*7,
+        refresh30:1000*60*60*24,
+        refreshDB:1000*60*60*24,
     },
     pairs:[
         'BTC-USD','BTC-EUR',

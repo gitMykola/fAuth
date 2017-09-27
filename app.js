@@ -1,5 +1,6 @@
 let express = require('express'),
     path = require('path'),
+    config = require('./services/config'),
     favicon = require('serve-favicon'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
@@ -8,15 +9,34 @@ let express = require('express'),
 let auth = require('./routes/auth'),
     index = require('./routes/index'),
     users = require('./routes/user'),
+    session = require('express-session'),
+    mongoStore = require('connect-mongodb-session')(session),
+    connectionString = 'mongodb://' //+ config.db.user + ':'
+                                    //+ config.db.pwd + '@'
+                                    + config.db.host + ':'
+                                    + config.db.port + '/'
+                                    + config.db.dbName,
+    store = new mongoStore({
+        uri: connectionString,
+        collection: 'sessions'
+    }),
     api = require('./routes/api_1_0');
 
 let app = express(),
     startProcess = require('./services/start');
 
+store.on('error', function(error) {console.log(error)});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
+app.use(session({
+    store:store,
+    cookie:{maxAge: config.app.cookieLife},
+    secret: config.app.privateKey,
+    resave: true,
+    saveUninitialized: true
+}));
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
