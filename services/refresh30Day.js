@@ -8,8 +8,7 @@ process.on('message', (msg) => {
     start();
 });
 
-let counter = 0;
-
+let coun1ter = 0;
 setInterval(() => start(),60*60*24*1000);
 
 function start(){
@@ -102,4 +101,4 @@ function start(){
             }
             process.send({pair:pair2, data:data[data.length - 1]});
         });
-};
+}

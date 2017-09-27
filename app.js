@@ -1,18 +1,17 @@
-let express = require('express');
-let path = require('path');
-let favicon = require('serve-favicon');
-let logger = require('morgan');
-let cookieParser = require('cookie-parser');
-let bodyParser = require('body-parser');
-let compass = require('node-compass');
+let express = require('express'),
+    path = require('path'),
+    favicon = require('serve-favicon'),
+    logger = require('morgan'),
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser');
 
 let auth = require('./routes/auth'),
     index = require('./routes/index'),
     users = require('./routes/user'),
     api = require('./routes/api_1_0');
 
-let app = express();
-let startProcess = require('./services/start');
+let app = express(),
+    startProcess = require('./services/start');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,7 +23,6 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(compass({ mode: 'expanded' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
