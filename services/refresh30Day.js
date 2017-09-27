@@ -8,12 +8,10 @@ process.on('message', (msg) => {
     start();
 });
 
-let coun1ter = 0;
 setInterval(() => start(),60*60*24*1000);
 
 function start(){
     process.send({start:true});
-    counter++;
     console.log('Starting ' + counter);
     const collection = db.get('D1');
     const date = new Date();
