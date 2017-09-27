@@ -40,8 +40,6 @@ module.exports = class RatesProvider{
 
                 for(let i = 0;i < br; i++)
                     {
-                        //if(1 || data[i].close * 0.03 < Math.abs(data[i-1].close - data[i].close))
-                        //{
                             let waitTill = new Date(new Date().getTime() + 1000);
                             while(waitTill > new Date()){}
 
@@ -67,13 +65,8 @@ module.exports = class RatesProvider{
                                     //console.log(result.data);
                                 }
                             });
-                            /*console.log(data[i].close + ' ' + data[i+1].close
-                                + ' ' + Math.round(Math.abs(data[i+1].close - data[i].close))
-                                + ' ' + Math.round(data[i].close * 0.03));*/
                             console.log(new Date(data[i].time*1000));
                             console.log(' '+i);
-                        //}
-
                     }
                 }
             });

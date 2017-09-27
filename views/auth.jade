@@ -1,0 +1,47 @@
+//
+   Created by Nick on 24.07.2017.
+    Sing UP
+extends layout
+
+block content
+            h2(class="col-sm-12 text-center") #{header}
+            h3(class="col-sm-12 text-center" id="alarm")
+            if action == "register"
+                div(id="signUp" class="col-sm-12")
+                    div(class="form-style col-sm-6 col-sm-offset-3")
+                        form(method="post" action="" id="signForm")
+                            div(class="form-group")
+                                label(for="name") Name
+                                input(class="form-control" id="inputUserName" type='text', placeholder='Name',name="name")
+                            div(class="form-group")
+                                label(for="email") Email
+                                input(class="form-control" id="inputUserEmail" type='text', placeholder='Email',name="email")
+                            div(class="form-group")
+                                label(for="pwd") Password
+                                input(class="form-control" id="inputUserPwd" type='password', placeholder='password',name="pwd")
+                            div(class="form-group")
+                                label(for="cpwd") Confirm password
+                                input(class="form-control" id="inputUserConfirmPwd" type='password', placeholder='confirm password', name="cpwd")
+                            div(class="form-group")
+                                button(class="btn btn-default" id="btnAddUser") Sign Up
+            else
+                div(id="login" class="col-sm-12")
+                    div(class="form-style col-sm-6 col-sm-offset-3")
+                        form(method="post" action="" id="signForm")
+                            div(class="form-group")
+                                label(for="email") Email
+                                input(class="form-control" id="inputUserEmail" type='text', placeholder='Email',name="email")
+                            div(class="form-group")
+                                label(for="pwd") Password
+                                input(class="form-control" id="inputUserPwd" type='password', placeholder='password',name="pwd")
+                            div(class="form-group")
+                                button(class="btn btn-default" id="btnAddUser") Login
+                                div(class="btn btn-default" id="btnFaceBook") Login with FaceBook
+            p #{sessionAuth}
+            div(id="fb-root")
+            div(class="fb-share-button" data-href="http://profee.club" data-layout="button_count" data-size="small" data-mobile-iframe="true")
+                a(class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fprofee.club%2F&amp;src=sdkpreparse") Share
+            button(class="btn btn-default" id="btnETH") ETH
+            div(id="ethInfo")
+            script( src="/scripts/login.js")
+            script( src='/scripts/fbApi.js')

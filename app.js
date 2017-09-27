@@ -1,16 +1,17 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var compass = require('node-compass');
+let express = require('express');
+let path = require('path');
+let favicon = require('serve-favicon');
+let logger = require('morgan');
+let cookieParser = require('cookie-parser');
+let bodyParser = require('body-parser');
+let compass = require('node-compass');
 
-var index = require('./routes/index');
-var api = require('./routes/api_1_0');
-//var users = require('./routes/users');
+let auth = require('./routes/auth'),
+    index = require('./routes/index'),
+    users = require('./routes/user'),
+    api = require('./routes/api_1_0');
 
-var app = express();
+let app = express();
 let startProcess = require('./services/start');
 
 // view engine setup
@@ -28,14 +29,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/api/v1.0', api);
-//app.use('/users', users);
+app.use('/auth',auth);
+app.use('/users', users);
 
-// Starting database & global object data refreshing process
-startProcess();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
@@ -50,5 +50,9 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+// Starting database & global object data refreshing process
+
+startProcess();
 
 module.exports = app;

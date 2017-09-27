@@ -7,6 +7,7 @@ let monk = require('monk'),
 process.on('message', (msg) => {
     console.log('Message from parent:', msg);
     start();
+
 });
 
 let counter = 0;
