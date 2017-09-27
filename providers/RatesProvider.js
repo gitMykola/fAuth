@@ -16,51 +16,7 @@ module.exports = class RatesProvider{
             req.onerror = (e) => reject(console.dir(`Network Error: ${e}`));
             req.send();
         });
-    };/*
-    static set30Days(res){};
-    static getRates(pair, next){
-        //console.log('API request processing...');
-        const options = {
-            "limit":30,
-
-        };
-        const collection = db.get('D1');
-        const date = new Date();
-        //collection.find({},{time:{$lte:date.valueOf(), $gte:(date.valueOf() + 60*60*24*30*1000)}})
-        collection.find({},["time","close",options])
-            .then((result)=>{
-                let data = result.map((days)=>{
-                    return {time:days.time,price:days.close};
-                    });
-                for(let i = 1;i < data.length;i++)
-                {
-                    //if
-                }
-                next(data);
-            });
     };
-    static getRatesToDB(pair, next){
-        console.log('processing...');
-        let dateFinish = new Date();
-        let dateStart = new Date(dateFinish - 60*60*24*30*1000);
-        dateFinish = dateFinish.getFullYear() + '-' + (dateFinish.getMonth() + 1) + '-' + dateFinish.getDate();
-        dateStart = dateStart.getFullYear() + '-' + (dateStart.getMonth() + 1) + '-' + dateStart.getDate();
-        const url = 'https://api.gdax.com/products/'+pair+'/candles?start="'+dateStart+'"&end="'+dateFinish+'"&granularity=86400';
-        console.log(url);
-        this.get(url)
-            .then((response)=>{
-                let data = {data: JSON.parse(response),error: null};
-                data.data = data.data.map(function(el){
-                    let date = new Date(el[0]*1000);
-                    date = date.getFullYear() +'-'+ (date.getMonth() + 1) +'-'+ date.getDate();
-                    return {date: date,priceClose: el[4]};});
-                //res.json(data);
-                console.log(data.data[0]);
-            }, (reject)=>{
-                console.log('GDAX Error.');//https://min-api.cryptocompare.com/data/histoday?fsym=BTC&tsym=USD&limit=30&aggregate=1
-                res.json({error: "Market Error.",data: null});
-            });
-    }*/
     static marketsToDB(){
         console.log('markets to DB ...');
         let pair = 'BTC-USD';
