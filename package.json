@@ -18,7 +18,7 @@
     "morgan": "~1.8.1",
     "node-compass": "^0.2.3",
     "serve-favicon": "~2.4.2",
-    "web3": "^1.0.0-beta.22",
+    "web3": "^0.19.0",
     "xmlhttprequest": "^1.8.0"
   }
 }
