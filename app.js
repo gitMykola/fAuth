@@ -71,6 +71,6 @@ app.use(function(err, req, res, next) {
 
 // Starting database & global object data refreshing process
 
-startProcess();
+//startProcess();
 
 module.exports = app;

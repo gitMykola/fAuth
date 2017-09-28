@@ -3,3 +3,8 @@ extends layout
 block content
   h1 #{title}
   p Welcome to #{title}
+  if sessionAuth == true
+    div(class="container")
+      div(id="createAccount" class="btn btn-default") Create Account
+      div(id="request" class="")
+    script( src="/javascripts/operations.js")

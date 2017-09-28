@@ -55,6 +55,7 @@ window.fbAsyncInit = function() {
 
     document.querySelector('#btnFaceBook').addEventListener('click',function(e){apiFriends(e, atoken)/*testGraph(e, atoken)*/;});
     document.querySelector('#btnETH').addEventListener('click',function(e){testETH(e)});
+
 };
 
 // Load the SDK asynchronously
@@ -153,3 +154,5 @@ function testETH(e)
     js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.10";
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
+
+

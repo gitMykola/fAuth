@@ -1,12 +1,35 @@
 let express = require('express'),
     provider = new require('../providers/RatesProvider'),
+    accounts = require('../providers/EthereumProvider'),
+    config = require('../services/config'),
     router = express.Router();
 
+router.get('/',(req,res)=>{
+    res.render('index', {
+        appName: config.app.name,
+        userName: req.session.user.name,
+        sessionAuth: req.session.auth.state
+    });
+});
 /* GET rates. */
 router.get('/:pair', function(req, res) {
-    let data = global.data30[req.params.pair];
-    res.json((data && data.length)?data
-        :{error:'No '+ req.params.pair +' data.'});
+    let param = req.params.pair;
+    console.log(param);
+    switch(param) {
+        case('createAccount'): {
+            res.render('index', {
+                appName: config.app.name,
+                userName: req.session.user.name,
+                sessionAuth: req.session.auth.state
+            });
+            break;
+        }
+        default: {
+            let data = global.data30[param];
+            res.json((data && data.length) ? data
+                : {error: 'No ' + req.params.pair + ' data.'});
+        }
+    }
 });
 /* Accounts
 * @method API createAccount
@@ -16,6 +39,9 @@ router.get('/:pair', function(req, res) {
 * @return {String} Account address
 */
 router.post('/createAccount',(req, res)=>{
-
+    let body = req.body;
+    accounts.new(body,(data)=>{
+       res.json(data);
+    });
 });
 module.exports = router;
