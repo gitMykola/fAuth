@@ -3,12 +3,4 @@ extends layout
 block content
   h1 #{title}
   p Welcome to #{title}
-  if sessionAuth == true
-    div(class="container")
-      div(id="request" class="")
 
-      label(for="passFrase") PassFrase (symbol count 10)
-      input(id="passFrase" class="input-sm" type="text" min=10 max=10)
-
-      div(id="createAccount" class="btn btn-default") Create Account
-    script( src="/javascripts/operations.js")

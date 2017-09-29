@@ -3,7 +3,7 @@ $('#createAccount').on('click',(e)=>{createAccount(e)});
 function createAccount(e){
     e.preventDefault();
     document.querySelector('#request').innerHTML = 'Wait ...';
-    let host = 'http://localhost:3000/api/v1.0/createAccount';
+    let host = 'http://localhost:3000/api/v1.0/accounts/create';
     let xhttp = new XMLHttpRequest();
     let passFrase = '';
     if(document.querySelector('#passFrase').value.length === 10)

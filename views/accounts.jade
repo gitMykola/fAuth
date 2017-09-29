@@ -1,0 +1,19 @@
+extends layout
+
+block content
+    h1 #{title}
+    if sessionAuth === true
+        div(class="container")
+            div(id="request" class="")
+            each row in acc
+                    h5="Currency "+row[0]
+                    h5="Address: "+row[1]
+            div(class="col-sm-8")
+                label(for="passFrase" class="col-sm-6") Password frase
+                input(id="passFrase" class="input-sm col-sm-6"
+                    placeholder="Should be strong 10 symbols" type="text" min=10 max=10)
+            div(id="createAccount" class="btn btn-default col-sm-4") Create Account
+
+        script( src="/javascripts/operations.js")
+    else
+        h1(class="warning") You aren't authorized to accounts!

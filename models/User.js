@@ -11,6 +11,7 @@ let express = require('express'),
 module.exports =
     {
         collectionName:'users',
+        collectionEthereumAccounts:'ethAccounts',
         getUserById: function(id,res,next)
         {
             db.get(this.collectionName).findOne({'_id':id},function(err,user){
@@ -57,6 +58,24 @@ module.exports =
         {
             db.get(this.collectionName).delete({'_id':id},function(err,user){
                 next(err,user);
+            });
+        },
+        addUserAccount:(data,next)=>{
+            db.get('ethAccounts').insert({user:data.userId,address:data.address,currency:data.currency},(err,account)=>{
+                console.dir(err);
+                if(err)next({err:err,data:null});
+                else next({err:null,data:account});
+            });
+        },
+        getUserAccounts:(userId,next)=>{
+            console.log(userId);
+            db.get('ethAccounts').find({},{user:userId,sort:{currecy:1}},(err,data)=>{
+                console.log(data);
+                if(err)next({err:err,data:null});
+                else {
+                    let acc = data.map((ac)=>{return [ac.currency,ac.address];});
+                    next({err:null,data:acc});
+                }
             });
         },
         validateData: function(data)

@@ -14,39 +14,45 @@ router.get('/',(req,res)=>{
     });
 });
 /* GET rates. */
-router.get('/:pair', function(req, res) {
-    let param = req.params.pair;
-    console.log(param);
-    switch(param) {
-        case('createAccount'): {
-            auth(req,res,()=>{
-                res.render('index', {
-                    appName: config.app.name,
-                    userName: req.session.user.name,
-                    sessionAuth: req.session.auth.state
-                });
-            });
-            break;
-        }
-        default: {
-            let data = global.data30[param];
+router.get('/stat/:pair', function(req, res) {
+    let pair = req.params.pair;
+    let data = global.data30[pair];
             res.json((data && data.length) ? data
-                : {error: 'No ' + req.params.pair + ' data.'});
-        }
-    }
+                : {error: 'No ' + pair + ' data.'});
 });
 /* Accounts
-* @method API createAccount
-* @params req.body{id:String(MongoDB),
-*                  passfrase:String(8..16),
-*                  currency:String(3)}
-* @return {String} Account address
+ get request to accounts(index.jade) state of accounts
 */
-router.post('/createAccount',auth, (req, res)=>{
+router.get('/accounts',auth,(req,res)=>{
+    accounts.get(req, (data)=>{
+        console.dir(data);
+        res.render('accounts', {
+            appName: config.app.name,
+            userName: req.session.user.name,
+            sessionAuth: req.session.auth.state,
+            acc:data
+        });
+    });
+});
+/*
+* @method API create account
+* @params (
+*           web3 instance,
+*           passfrase String,
+*           callback func()
+* )
+* @return {String} Account address || err
+*/
+router.post('/accounts/create',auth, (req, res)=>{
     let body = req.body;
     console.dir(req.body);
-    if(body.passfrase.length === 10) accounts.create(req.web3, body.passfrase,data=>{
-       res.json(data);
-    });else res.json({err:'WRONG PASSFRASE!!!'});
+    if(body.passfrase.length === 10) {
+        let data = {web3:req.web3,
+                    userId:req.session.user._id,
+                    pass:body.passfrase};
+        accounts.create(data,data=>{
+            res.json(data);
+        });
+    }else res.json({err:'WRONG PASSFRASE!!!'});
 });
 module.exports = router;
