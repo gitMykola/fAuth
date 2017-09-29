@@ -24,7 +24,7 @@ module.exports = {
         });
     },
     get:(req,next)=>{
-        user.getUserAccounts(req.session.user._id,(data)=>{
+        user.getUserAccounts(req.session.user._id+'',(data)=>{
           if(data.err)next(null);
           else next(data.data);
         })

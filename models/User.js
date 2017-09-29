@@ -69,7 +69,7 @@ module.exports =
         },
         getUserAccounts:(userId,next)=>{
             console.log(userId);
-            db.get('ethAccounts').find({},{user:userId,sort:{currecy:1}},(err,data)=>{
+            db.get('ethAccounts').find({user:userId},{user:userId,sort:{currecy:1}},(err,data)=>{
                 console.log(data);
                 if(err)next({err:err,data:null});
                 else {

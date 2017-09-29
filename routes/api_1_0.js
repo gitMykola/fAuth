@@ -1,7 +1,5 @@
 let express = require('express'),
     auth = require('../services/auth'),
-    //provider = new require('../providers/RatesProvider'),
-    //accounts = require('../providers/EthereumProvider'),
     accounts = require('../models/Account'),
     config = require('../services/config'),
     router = express.Router();
