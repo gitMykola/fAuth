@@ -20,23 +20,24 @@ let auth = require('./routes/auth'),
         uri: connectionString,
         collection: 'sessions'
     }),
+    Web3 = require('web3'),
     api = require('./routes/api_1_0');
 
 let app = express(),
     startProcess = require('./services/start');
 
-store.on('error', function(error) {console.log(error)});
+    store.on('error', function(error) {console.log(error)});
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-app.use(session({
-    store:store,
-    cookie:{maxAge: config.app.cookieLife},
-    secret: config.app.privateKey,
-    resave: true,
-    saveUninitialized: true
-}));
+    app.set('views', path.join(__dirname, 'views'));
+    app.set('view engine', 'jade');
+    app.use(session({
+        store:store,
+        cookie:{maxAge: config.app.cookieLife},
+        secret: config.app.privateKey,
+        resave: true,
+        saveUninitialized: true
+    }));
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -45,29 +46,43 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/api/v1.0', api);
-app.use('/auth',auth);
-app.use('/users', users);
+app.use(function(req,res,next){
+    if (typeof req.web3 !== 'undefined') {
+        req.web3 = new Web3(web3.currentProvider);
+    } else {
+        // set the provider you want from Web3.providers
+        req.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+    }
+    if(!req.web3.isConnected())
+        console.log("not connected");
+    else
+        console.log("connected");
+    next();
+    });
+
+    app.use('/', index);
+    app.use('/api/v1.0', api);
+    app.use('/auth',auth);
+    app.use('/users', users);
 
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  let err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+    // catch 404 and forward to error handler
+    app.use(function(req, res, next) {
+      let err = new Error('Not Found');
+      err.status = 404;
+      next(err);
+    });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // error handler
+    app.use(function(err, req, res, next) {
+      // set locals, only providing error in development
+      res.locals.message = err.message;
+      res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+      // render the error page
+      res.status(err.status || 500);
+      res.render('error');
+    });
 
 // Starting database & global object data refreshing process
 

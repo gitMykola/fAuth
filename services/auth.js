@@ -20,7 +20,7 @@ function Auth(req,res,next){
                     req.session.auth = {state:true,type:'common'};
                     req.session.user = result;
                     console.log('Authorize ');
-                    console.dir(result);
+                    //console.dir(result);
                     next();}
                 else{
                     console.log('Unable to authenticate user by password');
@@ -31,7 +31,7 @@ function Auth(req,res,next){
     }
     else
     {
-        if(req.session && req.session.auth.state && req.session.user !== undefined) next();
+        if(req.session.auth && req.session.auth.state && req.session.user !== undefined) next();
         else{
             console.log('Unable to authenticate user.');
             setTimeout(function () {

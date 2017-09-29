@@ -1,6 +1,8 @@
 let express = require('express'),
-    provider = new require('../providers/RatesProvider'),
-    accounts = require('../providers/EthereumProvider'),
+    auth = require('../services/auth'),
+    //provider = new require('../providers/RatesProvider'),
+    //accounts = require('../providers/EthereumProvider'),
+    accounts = require('../models/Account'),
     config = require('../services/config'),
     router = express.Router();
 
@@ -17,10 +19,12 @@ router.get('/:pair', function(req, res) {
     console.log(param);
     switch(param) {
         case('createAccount'): {
-            res.render('index', {
-                appName: config.app.name,
-                userName: req.session.user.name,
-                sessionAuth: req.session.auth.state
+            auth(req,res,()=>{
+                res.render('index', {
+                    appName: config.app.name,
+                    userName: req.session.user.name,
+                    sessionAuth: req.session.auth.state
+                });
             });
             break;
         }
@@ -38,9 +42,9 @@ router.get('/:pair', function(req, res) {
 *                  currency:String(3)}
 * @return {String} Account address
 */
-router.post('/createAccount',(req, res)=>{
+router.post('/createAccount',auth, (req, res)=>{
     let body = req.body;
-    accounts.new(body,(data)=>{
+    accounts.create(req.web3,data=>{
        res.json(data);
     });
 });

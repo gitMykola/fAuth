@@ -41,7 +41,7 @@ router.post('/login', auth, function(req,res){
     res.json({err:null, user:req.session.user});
 });
 router.get('/logout', auth, function(req,res){
-    if(req.session && req.session.auth)
+    if(req.session.auth !== 'undefined' && req.session.auth)
     {
         console.log('User ' + req.session.user.name + ' logout.');
         req.session.destroy();
