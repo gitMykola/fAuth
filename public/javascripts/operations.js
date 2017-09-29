@@ -5,8 +5,16 @@ function createAccount(e){
     document.querySelector('#request').innerHTML = 'Wait ...';
     let host = 'http://localhost:3000/api/v1.0/createAccount';
     let xhttp = new XMLHttpRequest();
-    let data = {passfrase:'123456',
+    let passFrase = '';
+    if(document.querySelector('#passFrase').value.length === 10)
+        passFrase = document.querySelector('#passFrase').value;
+    else{
+        document.querySelector('#request').innerHTML = 'WRONG PASSFRASE!';
+        return;
+    }
+    let data = {passfrase:passFrase,
                 currency:'ETH'};
+    console.dir(data);
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             //console.dir(this.responseText);

@@ -3,12 +3,15 @@ let express = require('express'),
     monk = require('monk'),
     config = require('../services/config'),
     db = monk(config.db.host+':'+config.db.port+'/'+config.db.dbName),
-    Web3 = require('web3');
+    Personal = require('web3-eth-personal');
 
 module.exports = {
-    create:(web3, next)=>{
-
-        next({address:'12345678-ETH-ACCOUNT-ADDRESS', passfrase:'secret'});
+    create:(web3, pass, next)=>{
+        let personal = new Personal(web3.currentProvider);
+        personal.newAccount(pass,(err,data)=>{
+            if(err)next({address:err});
+            else next({address:data});
+        });
     },
 
 };

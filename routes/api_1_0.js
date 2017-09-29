@@ -44,8 +44,9 @@ router.get('/:pair', function(req, res) {
 */
 router.post('/createAccount',auth, (req, res)=>{
     let body = req.body;
-    accounts.create(req.web3,data=>{
+    console.dir(req.body);
+    if(body.passfrase.length === 10) accounts.create(req.web3, body.passfrase,data=>{
        res.json(data);
-    });
+    });else res.json({err:'WRONG PASSFRASE!!!'});
 });
 module.exports = router;
