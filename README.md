@@ -50,3 +50,28 @@
     https://docs.gdax.com/
     http://faucet.ropsten.be 
     https://sebs.github.io/etherscan-api/
+    
+    for next reseaching
+    http://ru.bitcoinwiki.org
+    http://ipfs.io
+    http://bit.ly/ipfs-whitepaper
+    http://filecoin.io
+    https://storj.io
+    https://github.com/maidsafe/Whitepapers/blob/master/Project-Safe.md
+    https://litecoin.com
+    https://bitcoin.org
+    https://counterparty.io
+    https://www.hyperledger.org
+    https://github.com/bitpay/bitauth
+    https://openid.net
+    http://www.namecoin.info
+    https://nameid.org
+    https://github.com/ipfs/astralboot //Alternative to Ethereun VM
+    /* Ни Ethereum,
+      ни Bitcoin не способны запрашивать данные за пределами
+      самих себя. Это ограничение реализовано намеренно, с це-
+      лью безопасности.*/
+    http://gocircuit.github.io/circuit
+    https://opengarden.com
+    http://mercuryex.com  
+    
