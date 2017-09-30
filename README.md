@@ -51,7 +51,7 @@
     http://faucet.ropsten.be 
     https://sebs.github.io/etherscan-api/
     
-    for next reseaching
+######    current reseaching
     http://ru.bitcoinwiki.org
     http://ipfs.io
     http://bit.ly/ipfs-whitepaper
