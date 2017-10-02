@@ -22,7 +22,7 @@ router.get('/stat/:pair', function(req, res) {
  get request to accounts(index.jade) state of accounts
 */
 router.get('/accounts',auth,(req,res)=>{
-    accounts.get(req, (data)=>{
+    accounts.get(req.session.user._id+'', (data)=>{
         console.dir(data);
         res.render('accounts', {
             appName: config.app.name,
@@ -32,8 +32,19 @@ router.get('/accounts',auth,(req,res)=>{
         });
     });
 });
+router.get('/accounts/ETH/txcount/:address',auth,(req,res)=>{
+    accounts.getTransactions(req.web3, {currency:'ETH',address:req.params.address},(count)=>{
+        res.json({count:count});
+    });
+});
+router.get('/accounts/:userId',auth,(req,res)=>{
+    accounts.get(req.params.userId, (data)=>{
+        //console.dir(data);
+        res.json(data);
+    });
+});
 /*
-* @method API create account
+* @method API Account::create
 * @params (
 *           web3 instance,
 *           passfrase String,
@@ -46,7 +57,7 @@ router.post('/accounts/create',auth, (req, res)=>{
     console.dir(req.body);
     if(body.passfrase.length === 10) {
         let data = {web3:req.web3,
-                    userId:req.session.user._id,
+                    userId:req.session.user._id.toString(),
                     pass:body.passfrase};
         accounts.create(data,data=>{
             res.json(data);

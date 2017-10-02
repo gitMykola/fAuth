@@ -13,6 +13,10 @@ module.exports = {
         refresh30:1000*60*60*24,
         refreshDB:1000*60*60*24,
     },
+    currencies:[
+        'BTC',
+        'ETH'
+    ],
     pairs:[
         'BTC-USD','BTC-EUR',
         'ETH-USD','ETH-EUR'

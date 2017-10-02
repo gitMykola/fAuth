@@ -14,6 +14,7 @@
     serve-favicon ~2.4.2,
     xmlhttprequest ^1.8.0
     web3 0.19.0
+    web3-eth-personal ^1.0.0-beta.22
     
 # 
     Test url http://profee.club/

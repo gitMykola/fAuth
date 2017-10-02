@@ -7,13 +7,14 @@ let express = require('express'),
     user = require('../models/User');
 
 module.exports = {
-    create:(data, next, id = data.userId)=>{
+    create:(data, next)=>{
+        let udata = data;
         let personal = new Personal(data.web3.currentProvider);
-        personal.newAccount(data.pass,(err,acc)=>{
+        personal.newAccount(udata.pass,(err,acc)=>{
             if(err)next({err:err,address:null});
             else {
-                console.log(id+'');
-                let data = {userId:id+'',//convert ObjectId to String
+                //console.log(id+'');
+                let data = {userId:udata.userId,
                             address:acc,
                             currency:'ETH'};
                 user.addUserAccount(data,(d)=>{
@@ -23,11 +24,27 @@ module.exports = {
             }
         });
     },
-    get:(req,next)=>{
-        user.getUserAccounts(req.session.user._id+'',(data)=>{
+    get:(id,next)=>{
+        user.getUserAccounts(id,(data)=>{
           if(data.err)next(null);
-          else next(data.data);
+          else {
+              next(data.data);
+          }
         })
+    },
+    getTransactions:(web3,account,next)=>{
+        let acc = account;
+        switch(acc.currency){
+            case('ETH'):
+                web3.eth.getTransactionCount(acc.address,(err,count)=>{
+                    if(err)next(null);
+                    else next(count);
+               });
+                break;
+            case('BTC'):
+                break;
+            default:next(null);
+        }
     }
 
 };

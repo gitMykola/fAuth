@@ -6,8 +6,8 @@ block content
         div(class="container")
             div(id="request" class="")
             each row in acc
-                    h5="Currency "+row[0]
-                    h5="Address: "+row[1]
+                    h5="Currency "+row.currency
+                    h5="Address: "+row.address
             div(class="col-sm-8")
                 label(for="passFrase" class="col-sm-6") Password frase
                 input(id="passFrase" class="input-sm col-sm-6"
