@@ -8,7 +8,7 @@ process.on('message', (msg) => {
     start();
 });
 
-setInterval(() => start(),60*60*24*1000);
+setInterval(() => start(),config.app.refresh30);
 
 function start(){
     process.send({start:true});
@@ -26,8 +26,6 @@ function start(){
                         hour:null};
             });
 
-            //for(let i = 0; i < data.length; i++)console.log(i+' '+new Date(data[i].time*1000)+' '+data[i].price);
-            //data.sort((a ,b)=>{return (a.time - b.time > 0)});
             for(let i = 0;i < data.length - 1;i++) {
                 //console.log(data[i-1].price + '  ' +data[i].price + '  ' + data[i].price * 0.03 +' '+ Math.abs(data[i].price - data[i - 1].price));
                 if (data[i].price * 0.03 < Math.abs(data[i].price - data[i + 1].price)) {

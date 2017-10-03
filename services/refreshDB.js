@@ -12,7 +12,7 @@ process.on('message', (msg) => {
 
 let counter = 0;
 
-setInterval(() => start(), 60*60*24*1000);
+setInterval(() => start(), config.app.refreshDB);
 
 function start(){
     process.send({ counter: counter++ });
