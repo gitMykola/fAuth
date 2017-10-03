@@ -22,6 +22,6 @@ module.exports = function (){
     });
 
     refDB.send('Start refresh DB.');
-    setTimeout(()=>{ref30.send('Start refresh 30Day');},30*1*1000);
+    setTimeout(()=>{ref30.send('Start refresh 30Day');},15*1000);
 
 };

@@ -32,12 +32,12 @@ router.get('/accounts',auth,(req,res)=>{
         });
     });
 });
-router.get('/accounts/ETH/txcount/:address',auth,(req,res)=>{
+router.get('/accounts/ETH/txcount/:address',(req,res)=>{
     accounts.getTransactions(req.web3, {currency:'ETH',address:req.params.address},(count)=>{
         res.json({count:count});
     });
 });
-router.get('/accounts/:userId',auth,(req,res)=>{
+router.get('/accounts/:userId',(req,res)=>{
     accounts.get(req.params.userId, (data)=>{
         //console.dir(data);
         res.json(data);
