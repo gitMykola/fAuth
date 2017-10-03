@@ -43,8 +43,9 @@ router.get('/accounts/:userId',auth,(req,res)=>{
         res.json(data);
     });
 });
-router.get('/test',auth,(req,res)=>{
-    let af = 0;
+router.get('/test',(req,res)=>{
+    res.json({data:'OK'});
+    /*let af = 0;
     let bf = [{address:'0x56cb9adff6b442697b2eb912a73a618a5b3bea8a'},
         {address:'0x8ae4f5a1f71b52ccedcaa6df3c17dd4a5341ab7d'},
         {address:'30xde05cD644e6525e91260B6E24D489b7bFb9bFaFad'}];
@@ -55,7 +56,7 @@ router.get('/test',auth,(req,res)=>{
     };
     console.log(typeof(cf));
     //fn(af,bf,res,cf);
-    ftx(af,bf,req.web3,res,cf);
+    ftx(af,bf,req.web3,res,cf);*/
 });
 let ftx=(a,b,w3,r,c)=>{
     //let w3 = rq.web3;

@@ -8,7 +8,7 @@ process.on('message', (msg) => {
     start();
 });
 
-setInterval(() => start(),config.app.refresh30);
+//setInterval(() => start(),config.app.refresh30);
 
 function start(){
     process.send({start:true});
