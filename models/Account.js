@@ -37,6 +37,7 @@ module.exports = {
         switch(acc.currency){
             case('ETH'):
                 web3.eth.getTransactionCount(acc.address,(err,count)=>{
+                    //console.log('Test address '+acc.address);
                     if(err)next(null);
                     else next(count);
                });

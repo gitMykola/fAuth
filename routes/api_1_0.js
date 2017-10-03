@@ -43,6 +43,44 @@ router.get('/accounts/:userId',auth,(req,res)=>{
         res.json(data);
     });
 });
+router.get('/test',auth,(req,res)=>{
+    let af = 0;
+    let bf = [{address:'0x56cb9adff6b442697b2eb912a73a618a5b3bea8a'},
+        {address:'0x8ae4f5a1f71b52ccedcaa6df3c17dd4a5341ab7d'},
+        {address:'30xde05cD644e6525e91260B6E24D489b7bFb9bFaFad'}];
+    let cf = (ac,bc,rc,fc)=>{
+        console.dir(bc);
+        //ac++;
+        fc(ac,bc,rc,cf);
+    };
+    console.log(typeof(cf));
+    //fn(af,bf,res,cf);
+    ftx(af,bf,req.web3,res,cf);
+});
+let ftx=(a,b,w3,r,c)=>{
+    //let w3 = rq.web3;
+    let fnt = ftx;
+    if(a<b.length){
+        w3.eth.getTransactionCount(b[a].address,(err,cnt)=>{
+            b[a].txc = cnt;
+            console.log('a = '+a+' len '+b.length+' cnt '+cnt);
+            a++;
+            fnt(a,b,w3,r,c);
+        });
+    }else r.json(b);
+};
+let fn=(a,b,r,c)=>{
+    //a++;
+    if(a < b.length){
+        b[a].value = a*a;
+        console.log('a = '+a+' len '+b.length+' type '+typeof(c));
+        a++;
+        fn(a,b,r,fn);
+    }
+    else r.json(b);
+};
+
+
 /*
 * @method API Account::create
 * @params (
