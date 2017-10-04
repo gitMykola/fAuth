@@ -44,7 +44,7 @@ router.get('/accounts/:userId',(req,res)=>{
     });
 });
 router.get('/test',(req,res)=>{
-    res.json({data:'OK'});
+    //res.json({data:'OK'});
     let af = 0;
     let bf = [{address:'0x56cb9adff6b442697b2eb912a73a618a5b3bea8a'},
         {address:'0x8ae4f5a1f71b52ccedcaa6df3c17dd4a5341ab7d'},

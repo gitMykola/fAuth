@@ -24,7 +24,8 @@ module.exports = class RatesProvider{
             if(err)console.log(err);
             else {
                 const data = result.data;
-                const br = data.length > 30?30:data.length;
+                console.dir(data);
+                const br = (data.length > 30)?30:data.length;
                 const collection = db.get('D1');
                 for(let i = 0;i < br; i++) {
                     collection.findOne({pair:data[i].pair,
@@ -40,7 +41,7 @@ module.exports = class RatesProvider{
 
                 for(let i = 0;i < br; i++)
                     {
-                            let waitTill = new Date(new Date().getTime() + 1000);
+                            let waitTill = new Date(new Date().getTime() + 500);
                             while(waitTill > new Date()){}
 
                             market_1(pair,'H1', data[i].time,(result,err)=>{
@@ -75,7 +76,7 @@ module.exports = class RatesProvider{
             if(err)console.log(err);
             else {
                 const data = result.data;
-                const br = data.length > 30?30:data.length;
+                const br = (data.length > 30)?30:data.length;
                 const collection = db.get('D1');
                 for(let i = 0;i < br; i++) {
                     collection.findOne({pair:data[i].pair,
