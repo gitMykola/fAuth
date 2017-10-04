@@ -12,6 +12,7 @@ module.exports = {
         cookieLife:1000*60*60*24*7,
         refresh30:1000*60*60*24,
         refreshDB:1000*60*60*24,
+        ref30DB:1000*60*5,
     },
     currencies:[
         'BTC',

@@ -86,6 +86,6 @@ app.use(function(req,res,next){
 
 // Starting database & global object data refreshing process
 
-startProcess();
+startProcess({ref30DB:config.app.ref30DB});
 
 module.exports = app;

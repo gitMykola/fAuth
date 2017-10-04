@@ -95,4 +95,4 @@ module.exports =
             pass += decipher.final('utf8');
             return pass;
         },
-    }
+    };

@@ -38,7 +38,7 @@ module.exports = {
             case('ETH'):
                 web3.eth.getTransactionCount(acc.address,(err,count)=>{
                     //console.log('Test address '+acc.address);
-                    if(err)next(null);
+                    if(err)next(0);//0 - for test accepting
                     else next(count);
                });
                 break;
