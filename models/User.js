@@ -6,7 +6,8 @@ let express = require('express'),
     monk = require('monk'),
     config = require('../services/config'),
     db = monk(config.db.host+':'+config.db.port+'/'+config.db.dbName),
-    cryptor = require('crypto');
+    cryptor = require('crypto'),
+    rnd = require('randomstring');
 
 module.exports =
     {
@@ -77,22 +78,27 @@ module.exports =
                 }
             });
         },
-        validateData: function(data)
+        validateData: (data)=>
         {
             return true;
         },
-        encrypt: function(password)
+        encrypt: (password)=>
         {
-            let cipher = cryptor.createCipher('aes-256-ctr', config.app.privateKey);
-            let cpass = cipher.update(password.toString(), 'utf8', 'hex');
-            cpass += cipher.final('hex');
+            let cpass = {};
+            cpass.salt = rnd.generate();
+            let cipher = cryptor.createCipher('aes-256-ctr', cpass.salt);
+            cpass.pass = cipher.update(password.toString(), 'utf8', 'hex');
+            cpass.pass += cipher.final('hex');
             return cpass;
         },
-        decrypt: function(cpass)
+        decrypt: (cpassword)=>
         {
-            let decipher = cryptor.createDecipher('aes-256-ctr', config.app.privateKey);
-            let pass = decipher.update(cpass, 'hex', 'utf8');
+            let decipher = cryptor.createDecipher('aes-256-ctr', cpassword.salt);
+            let pass = decipher.update(cpassword.pass, 'hex', 'utf8');
             pass += decipher.final('utf8');
             return pass;
+        },
+        verifyPassword:(pass,user,vf)=>{
+            return pass === vf(user.pwd);
         },
     };

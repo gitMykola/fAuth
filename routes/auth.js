@@ -23,7 +23,7 @@ router.post('/register', function(req,res) {
     else {
         console.dir(req.body);
         user.setUser(req.body, res, function(err,user){
-        if(err) console.log('User '+ req.body.name +" don't registered. Error " + err);
+        if(err) console.log("User don't registered. Error " + err);
         else console.log('User '+ user.name +' registered.');
         res.json({err:err,user:user})
         });

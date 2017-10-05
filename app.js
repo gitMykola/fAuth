@@ -81,11 +81,12 @@ app.use(function(req,res,next){
 
       // render the error page
       res.status(err.status || 500);
+      console.dir(err);
       res.render('error');
     });
 
 // Starting database & global object data refreshing process
 
-startProcess({ref30DB:config.app.ref30DB});
+//startProcess({ref30DB:config.app.ref30DB});
 
 module.exports = app;

@@ -16,7 +16,7 @@ function Auth(req,res,next){
                 console.log('Unable to authenticate user by email');
                 res.json({err:'Authentication wrong! Invalid email.', user:null});
             }else{
-                if(reqPwd === user.decrypt(result.pwd)){
+                if(user.verifyPassword(reqPwd,result,user.decrypt)){
                     req.session.auth = {state:true,type:'common'};
                     req.session.user = result;
                     console.log('Authorize ');
