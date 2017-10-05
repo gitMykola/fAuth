@@ -80,6 +80,7 @@ module.exports =
         },
         validateData: (data)=>
         {
+
             return true;
         },
         encrypt: (password)=>

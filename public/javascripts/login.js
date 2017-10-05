@@ -10,7 +10,7 @@ document.getElementById('signForm').addEventListener('submit', function (e) {
         console.log(inputs[i].name + ' ' +inputs[i].value + ' ' +data[inputs[i].name]);
     }
     if(!verify(data)) return false;
-    if(data.cpwd)data.cpwd = null;
+    if(data.cpwd) delete data.cpwd;
     let href, host = 'http://localhost:3000';// Dont forget SETUP SERVER PORT!!!!!!!!!!!!!!!!!
     host += (inputs.length > 2) ? '/auth/register' : '/auth/login';
     href = (inputs.length > 2) ? '/auth/login' : '/';
