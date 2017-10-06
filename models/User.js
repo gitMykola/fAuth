@@ -80,7 +80,30 @@ module.exports =
         },
         validateData: (data)=>
         {
-
+            console.log('Data VERIFICATION');
+            console.dir(data);
+            for(let index in data)
+            {
+                if(data.hasOwnProperty(index))
+                {
+                    switch(data.index)
+                    {
+                        case 'name':
+                            if(data.index.length < 3 && data.index.length > 50)
+                                return false;
+                            break;
+                        case 'email':
+                            if(data.index.length > 2 && data.index.length < 51)
+                                return false;
+                            break;
+                        case 'pwd':
+                            if(data.index.length > 2 && data.index.length < 51)
+                                return false;
+                            break;
+                        default:break;
+                    }
+                }
+            }
             return true;
         },
         encrypt: (password)=>

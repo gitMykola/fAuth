@@ -52,8 +52,16 @@
     BTC-USD
     ETH-USD
 ###	description:
-    There're crypto currencies rates provider class RatesProvider(/providers/RatesProvider.js) where You can find marketsToDB(). This func() without any arguments and main action of this one is a reading via ajax requests some brokers(like GDAX and others) api to input crypto currency rates history. For example GDAX market has module export func() 
-    (/services/gdax.js) who's named like market_1(...) and has 4 params(pair - currency pair like 'ETH-USD', period - now Day like D1 or Hour like H1, useing it to set time interval for market request and database collection to save history data, time - timestamp to determine subinterval for market request, next - callback func() to process requesting data).<br>
+    There're crypto currencies rates provider class 
+    RatesProvider(/providers/RatesProvider.js) where You can find marketsToDB(). 
+    This func() without any arguments and main action of this one is a reading
+     via ajax requests some brokers(like GDAX and others) api to input crypto
+      currency rates history. For example GDAX market has module export func() 
+    (/services/gdax.js) who's named like market_1(...) and has 4 params(pair - currency
+     pair like 'ETH-USD', period - now Day like D1 or Hour like H1, useing it 
+     to set time interval for market request and database collection to save 
+     history data, time - timestamp to determine subinterval for market request,
+      next - callback func() to process requesting data).<br>
     MongoDB database used in this project.
   ###### database 'crypto'
   ###### collections:
@@ -67,7 +75,7 @@
                                  },
                         },
          'sessions' => {
-                        express-session Object,  
+                        express-session Object,  https://www.npmjs.com/package/express-session
                         },
          'D1'       => {
                          '_id'    = ObjectId("{:userId}") unique field of days OCHL handle id,
@@ -95,7 +103,10 @@
                             'address'= String Ethereum account address
                             }          
      
-     'crypto' database and two collections 'D1' and 'H1' where stored days and hours data. There're some fields: _id - database unique Object, pair - currency pair, time - timestamp of data, open/close/high/low - OCHL like market model data, price fields and market - name of source data market.
+     'crypto' database and two collections 'D1' and 'H1' where stored days
+      and hours data. There're some fields: _id - database unique Object,
+       pair - currency pair, time - timestamp of data, open/close/high/low - OCHL
+        like market model data, price fields and market - name of source data market.
     In app.js started two child processes(refDB and ref30 './services/refreshDB.js' and './services/refresh30Day.js') via fork (node module 'child_process'). refDB used RatesProvider via marketToDB() to database history data inputs and there're setting up time interval to make it sometimes. The same time schem apply with ref30 process to refresh data into global object variable global.data where setting up currency pairs arrays. Application use global.data object to send request data as JSON array.
 
 ####    Resources:
