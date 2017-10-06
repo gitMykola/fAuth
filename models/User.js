@@ -71,10 +71,10 @@ module.exports =
         getUserAccounts:(userId,next)=>{
             console.log(userId);
             db.get('ethAccounts').find({user:userId},{user:userId,sort:{currecy:1}},(err,data)=>{
-                if(err)next({err:err,data:null});
+                if(err)next({error:err,data:null});
                 else {
                     let acc = data.map((ac)=>{return {currency:ac.currency,address:ac.address};});
-                    next({err:null,data:acc});
+                    next({error:null,data:acc});
                 }
             });
         },

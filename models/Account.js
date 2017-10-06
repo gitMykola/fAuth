@@ -26,10 +26,7 @@ module.exports = {
     },
     get:(id,next)=>{
         user.getUserAccounts(id,(data)=>{
-          if(data.err)next(null);
-          else {
-              next(data.data);
-          }
+          next(data.err,data.data);
         })
     },
     getTransactions:(web3,account,next)=>{
