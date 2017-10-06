@@ -86,19 +86,18 @@ module.exports =
             {
                 if(data.hasOwnProperty(index))
                 {
+                    if(data.index.length < 3 && data.index.length > 50 && !data.index.match(/[a-zA-Z0-9@_.]/))
+                        return false;
                     switch(data.index)
                     {
                         case 'name':
-                            if(data.index.length < 3 && data.index.length > 50)
-                                return false;
                             break;
                         case 'email':
-                            if(data.index.length > 2 && data.index.length < 51)
+                            if(!data.index.match(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/))
                                 return false;
                             break;
                         case 'pwd':
-                            if(data.index.length > 2 && data.index.length < 51)
-                                return false;
+                            if(!data.index.match())return false;
                             break;
                         default:break;
                     }

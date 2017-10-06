@@ -9,6 +9,7 @@
     debug ~2.6.3,
     express ~4.15.2,
     jade ~1.11.0,
+    monk ^6.0.4,
     morgan ~1.8.1,
     node-compass ^0.2.3,
     serve-favicon ~2.4.2,
@@ -16,7 +17,55 @@
     web3 0.19.0
     web3-eth-personal ^1.0.0-beta.22
     
-# 
+#
+#### SETUP AND INSTALLATION
+   ###### ENVIRONMENT
+    It was tested on Ubuntu 16.04(x64) and CentOS (centos-release-7-3.1611.el7.centos.x86_64)
+    Disk space should be more 15Gb to use ethereum testnet
+    
+    All next steps will be executed into terminal connected to 
+    your server via ssh (Example command line mykola@mykola-UX360CA:~$ ssh root@profee.club).
+    
+    For the first Create work directory (Example /var/www/ProjectName) and
+    install node.js (https://nodejs.org/uk/download/package-manager/#debian-and-ubuntu-based-linux-distributions,
+    https://www.digitalocean.com/community/tutorials/node-js-ubuntu-16-04-ru),
+    also you should to install all modules from dependencies (look in /package.json - dependencies block)
+    
+    For the second install MongoDB 
+       En https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-mongodb-on-ubuntu-16-04
+       Ru https://www.digitalocean.com/community/tutorials/mongodb-ubuntu-16-04-ru
+    (there're you should find way to setup mongo like daemon process
+    to check this ok status print in command line '/path to mongo installation/mongo'
+    or just 'mongo' if you create link for this one, and you should see mongo command line,
+    and you can check all you system proccesses to print in comman terminal line(not in mongo
+     command line, don't forget exit via Ctrl+C) 'ps -A' and you'll see all proccess list.
+      
+    The third step will check correct application start. Print into command line 'npm start' 
+    and check all error message, if there're it's will be. In the all right way you will see 
+    application console message with database refreshing proccess. This proccess will start 
+    every 24 hour since you start application. There're you can find 3 node proccess into 
+    application(look it's via 'ps -A' in command term. line). 1-app.js(main application), 
+    2-refreshDB.js(database refresh child proccess, its read markets via ajax requests into 
+    /markets/gdax.js and others will be) 3-refresh30Day.js(child proccess to refresh global 
+    array where statistic data response to users via api requests)
+    In the way you fix all error with application starting via command line, you can make 
+    daemon proccess to autostart application. It's like mongod daemon, just create text file 
+    into '/etc/systemd' directory and run 'systemctl start {your_app_daemon_file_name}'
+    check this step via 'ps -A' and look in proccess list 3 node proccess. All console message
+    you'll find in '/var/log/message' (if you use CentOS).
+    
+    The last step - geth installation and starting(including synchronization). It's take a time
+    depend on your hardware and net speed. https://github.com/ethereum/go-ethereum/wiki/Installation-Instructions-for-Ubuntu
+    To start synchronization print in term. 'geth --testnet --syncmode "fast" --rpc --rpcapi db,eth,net,web3,personal --cache=1024 --rpcport 8545 --rpcaddr 127.0.0.1 --rpccorsdomain "*" --bootnodes "enode://20c9ad97c081d63397d7b685a412227a40e23c8bdc6688c6f37e97cfbc22d2b4d1db1510d8f61e6a8866ad7f0e17c02b14182d37ea7c3c8b9c2683aeb6b733a1@52.169.14.227:30303,enode://6ce05930c72abc632c58e2e4324f7c7ea478cec0ed4fa2528982cf34483094e9cbc9216e7aa349691242576d552a2a56aaeae426c5303ded677ce455ba1acd9d@13.84.180.240:30303"'
+    (without '' of course and wait while it'll be done).
+    
+    Don't forget setup /services/config.js (there're you should check mongo settings, it's apply 
+    to mongo connection string, also check app.host). /public/javascripts/login.js It's for
+    testing some functions via web page. There're check app config array(app.server). 
+              
+    
+#####   
+    
     Test url http://profee.club/api/v1.0
 ###   Api:
    ###### GET /stat/{:pair}
