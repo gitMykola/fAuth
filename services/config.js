@@ -7,6 +7,7 @@ module.exports = {
         pwd:'',
     },
     app:{
+        host:'http://localhost:3000',
         name:'cryptoApi',
         privateKey:'23gqwSE8vD)(*$J',
         cookieLife:1000*60*60*24*7,

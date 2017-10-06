@@ -1,6 +1,15 @@
 /**
  * Created by Nick on 01.08.2017.
  */
+const app = {
+    server:'http://localhost:3000',// Dont forget SETUP HOST:PORT !!!!!!!!!!!!!!!!!
+    routeHome:'/',
+    routRegister:'/auth/register',
+    routeLogin:'/auth/login',
+    commonMatch:/[a-zA-Z0-9@_.]/,
+    emailMatch:/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
+};
+
 document.getElementById('signForm').addEventListener('submit', function (e) {
     e.preventDefault();
     let data = {name:"non"};
@@ -11,9 +20,9 @@ document.getElementById('signForm').addEventListener('submit', function (e) {
     }
     if(!verify(data)) return false;
     if(data.cpwd) delete data.cpwd;
-    let href, host = 'http://localhost:3000';// Dont forget SETUP SERVER PORT!!!!!!!!!!!!!!!!!
-    host += (inputs.length > 2) ? '/auth/register' : '/auth/login';
-    href = (inputs.length > 2) ? '/auth/login' : '/';
+    let href, host = app.server;
+    host += (inputs.length > 2) ? app.routRegister : app.routeLogin;
+    href = (inputs.length > 2) ? app.routeLogin : app.routeHome;
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
@@ -35,10 +44,10 @@ document.getElementById('signForm').addEventListener('submit', function (e) {
         {
             if(data[i].length < 3) {err="Please check " + ((i === "pwd")?'password':i) + ". It should be more 2 symbols.";break}
             if(data[i].length > 50) {err="Please check " + ((i === "pwd")?'password':i) + ". It should be less 50 symbols.";break}
-            if(!data[i].match( /[a-zA-Z0-9@_.]/ )){err="Please check " + ((i === "pwd")?'password':i)
+            if(!data[i].match( app.commonMatch )){err="Please check " + ((i === "pwd")?'password':i)
                 + ". It should consist of digits 0-9, characters a-z A-Z, may be symbols @_.";break}
         }
-        if(!data.email.match( /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/ ))
+        if(!data.email.match( app.emailMatch ))
             err="Please check email.";
         if(data.pwd.length < 6) errr="Password should be more 6 symbols.";
         if(inputs.length > 2)
