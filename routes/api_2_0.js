@@ -65,5 +65,20 @@ router.post('/config',()=>{});
 *       amount - string (ethereum amount)
 *   response:
 *       error - null || string ('Transaction proccess fault.')
-*       data - string ('Ok') || null
+*       data - string ('Ok') || string() || null
+*       status - string ('wait google authorization...') || ('done')
 * */
+router.post('/transaction',()=>{});
+
+/*
+*   (6) Recieve Google data
+*   parameters:
+*       userId - string (user id)
+*       gdata:
+*           user - google user data
+*           pass - google user pass
+*   response:
+*       error - null || string (Google error message)
+*       data - null
+* */
+router.post('/googleAuth',()=>{});
