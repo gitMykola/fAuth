@@ -195,5 +195,6 @@
     http://mercuryex.com  
     https://developers.google.com/identity/protocols/OAuth2
     https://developers.google.com/identity/protocols/OAuth2ForDevices
+    https://www.owasp.org/index.php/Password_Storage_Cheat_Sheet
     
     

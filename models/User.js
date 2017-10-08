@@ -86,7 +86,7 @@ module.exports =
             {
                 if(data.hasOwnProperty(index))
                 {
-                    if(data.index.length < 3 && data.index.length > 50 && !data.index.match(/[a-zA-Z0-9@_.]/))
+                    if(data[index].length < 3 && data[index].length > 50 && !data[index].match(/[a-zA-Z0-9@_.]/))
                         return false;
                     switch(data.index)
                     {
@@ -108,20 +108,30 @@ module.exports =
         encrypt: (password)=>
         {
             let cpass = {};
-            cpass.salt = rnd.generate();
-            let cipher = cryptor.createCipher('aes-256-ctr', cpass.salt);
+            cpass.salt = cryptor.randomBytes(config.crypt.saltLen).toString('hex');
+            /*let cipher = cryptor.createCipher('aes-256-ctr', cpass.salt);
             cpass.pass = cipher.update(password.toString(), 'utf8', 'hex');
-            cpass.pass += cipher.final('hex');
+            cpass.pass += cipher.final('hex');*/
+            cpass.pass = cryptor.pbkdf2Sync(password,
+                cpass.salt,
+                config.crypt.et,
+                config.crypt.keyLen,
+                config.crypt.alg).toString('hex');
             return cpass;
         },
-        decrypt: (cpassword)=>
+        decrypt: (cpassword,salt)=>
         {
-            let decipher = cryptor.createDecipher('aes-256-ctr', cpassword.salt);
+            /*let decipher = cryptor.createDecipher('aes-256-ctr', cpassword.salt);
             let pass = decipher.update(cpassword.pass, 'hex', 'utf8');
-            pass += decipher.final('utf8');
-            return pass;
+            pass += decipher.final('utf8');*/
+            return cryptor.pbkdf2Sync(cpassword,
+                salt,
+                config.crypt.et,
+                config.crypt.keyLen,
+                config.crypt.alg).toString('hex');
         },
         verifyPassword:(pass,user,vf)=>{
-            return pass === vf(user.pwd);
+            //return pass === vf(user.pwd);
+            return user.pwd.pass === vf(pass,user.pwd.salt)
         },
     };

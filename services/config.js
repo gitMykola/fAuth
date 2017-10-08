@@ -22,5 +22,12 @@ module.exports = {
     pairs:[
         'BTC-USD','BTC-EUR',
         'ETH-USD','ETH-EUR'
-    ]
+    ],
+    crypt:{
+            date:'10.01.2017',
+            keyLen:256,
+            saltLen:32,
+            alg:'sha256',
+            et:1000,
+        },
 };
