@@ -16,6 +16,7 @@
     xmlhttprequest ^1.8.0
     web3 0.19.0
     web3-eth-personal ^1.0.0-beta.22
+    googleapis ^22.2.0
     
 #
 #### SETUP AND INSTALLATION
@@ -192,4 +193,7 @@
     http://gocircuit.github.io/circuit
     https://opengarden.com
     http://mercuryex.com  
+    https://developers.google.com/identity/protocols/OAuth2
+    https://developers.google.com/identity/protocols/OAuth2ForDevices
+    
     
