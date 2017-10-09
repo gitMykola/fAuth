@@ -21,7 +21,8 @@ let auth = require('./routes/auth'),
         collection: 'sessions'
     }),
     Web3 = require('web3'),
-    api = require('./routes/api_1_0');
+    api = require('./routes/api_1_0'),
+    api2 = require('./routes/api_2_0');
 
 let app = express(),
     startProcess = require('./services/start');
@@ -62,6 +63,7 @@ app.use(function(req,res,next){
 
     app.use('/', index);
     app.use('/api/v1.0', api);
+    app.use('/api/v2.0', api2);
     app.use('/auth',auth);
     app.use('/users', users);
 

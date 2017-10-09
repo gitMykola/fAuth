@@ -17,7 +17,9 @@ let express = require('express'),
  *          tempId - string (user id from temporary storage)
  *          || null
  */
-router.post('/genesis',()=>{});
+router.get('/genesis',(req,res)=>{
+    res.json({error:null,data:null});
+});
 
 /*
 *   (2) Recieve four digits
@@ -31,7 +33,9 @@ router.post('/genesis',()=>{});
 *           combination don't exist into temporary table
 *       data - string (userId from common storage) || null
 * */
-router.post('/message',()=>{});
+router.get('/message',(req,res)=>{
+    res.json({error:null,data:null});
+});
 
 /*
 *   (3) Recieve passfrase
@@ -42,7 +46,9 @@ router.post('/message',()=>{});
 *       error - null || string ('Fault to create account. Try one more time.')
 *       data - string ('Ok') || null
 * */
-router.post('/account',()=>{});
+router.get('/account',(req,res)=>{
+    res.json({error:null,data:null});
+});
 
 /*
 *   (4) Recieve config user object
@@ -55,7 +61,9 @@ router.post('/account',()=>{});
 *       data - string ('Ok') || null
 *
 * */
-router.post('/config',()=>{});
+router.get('/config',(req,res)=>{
+    res.json({error:null,data:null});
+});
 
 /*
 *   (5) Resieve transaction data
@@ -68,7 +76,9 @@ router.post('/config',()=>{});
 *       data - string ('Ok') || string() || null
 *       status - string ('wait google authorization...') || ('done')
 * */
-router.post('/transaction',()=>{});
+router.get('/transaction',(req,res)=>{
+    res.json({error:null,data:null});
+});
 
 /*
 *   (6) Recieve Google data
@@ -81,4 +91,7 @@ router.post('/transaction',()=>{});
 *       error - null || string (Google error message)
 *       data - null
 * */
-router.post('/googleAuth',()=>{});
+router.get('/googleAuth',(req,res)=>{
+    res.json({error:null,data:null});
+});
+module.exports = router;
