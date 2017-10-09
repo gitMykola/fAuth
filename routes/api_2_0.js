@@ -60,8 +60,13 @@ router.post('/message',(req,res)=>{// yzjQ
 *       error - null || string ('Fault to create account. Try one more time.')
 *       data - string ('Ok') || null
 * */
-router.post('/account',(req,res)=>{
-    res.json({error:null,data:null});
+router.post('/account',(req,res)=>{ // 59dbaad613247c274c33c95b
+    if(req.body && req.body.passphrase && req.body.userId)
+        accounts.createForPhoneUser({pass:req.body.passphrase,userId:req.body.userId,web3:req.web3},(data)=>{
+            if(data.err)res.json({error:err});
+            else res.json({error:null,data:data.address});
+        });
+    else res.json({error:'Wrong data!',data:null});
 });
 
 /*
