@@ -12,6 +12,7 @@ let express = require('express'),
 module.exports =
     {
         collectionName:'users',
+        tempCollection:'tmpUsers',
         collectionEthereumAccounts:'ethAccounts',
         getUserById: function(id,res,next)
         {
@@ -27,6 +28,16 @@ module.exports =
                 });
             else next('Invalid email: ' + email,null);
         },
+        getUserByPhone: function(phone,next){
+            let err = 'Invalid Phone!';
+            if(!this.validateData({phone:phone}))next({error:err});
+            else {
+                db.get(this.collectionName).findOne({'phone':phone},(err,user)=>{
+                    if(err)next({error:'Database error!'});
+                    else next({error:null,data:user});
+                });
+            }
+        },
         getAllUsers: function(res,next)
         {
             console.log('getAll');
@@ -34,7 +45,18 @@ module.exports =
                 next(err,(err)?null:users);
             });
         },
-        setUser: function(data,res,next)
+        setTempUser: function(data,next){
+            if(!this.validateData(data))next({error:'Data invalid'});
+            else {
+                data.message = rnd.generate(4);
+                data.created_at = (new Date()).getTime();
+                db.get(this.tempCollection).insert(data,(err,tmpUser)=>{
+                    if(err)next({error:'Database error.'});
+                    else next({error:null,data:data.message});
+                });
+            }
+        },
+        setUser: function(data,next)
         {
             if(this.validateData(data))
             {
@@ -45,6 +67,39 @@ module.exports =
                     else next(null, user);
                 });
             }else next('Data invalid!', null);
+        },
+        setUserByMessage:function(message,next){
+            if(!this.validateData({message:message}))next({error:'Incorrect verify message!'});
+            else{
+                db.get(this.tempCollection).find({'message':message},(err,tmpUser)=>{
+                    if(err)next({error:'Database error!'});
+                    else{
+                        if(tmpUser.length !== 1)next({error:'Wrong message!'});
+                        else {
+                            let staticUser = {
+                                name:'PHONE USER',
+                                phone:tmpUser[0].phone,
+                                created_at:(new Date()).getTime(),
+                                pwd:'111111',
+                            };
+                            db.get(this.collectionName).find({'phone':staticUser.phone},(err,users)=>{
+                                if(err)next({error:'Database error!'});
+                                else {
+                                    if(users.length > 0)next({error:'Dublicate user!'});
+                                    else this.setUser(staticUser, (err, user) => {
+                                        if (err) next({error: 'Database error!'});
+                                        else {
+                                            db.get(this.tempCollection).remove({phone:staticUser.phone});
+                                            next({error: null, data: user._id.toString()});
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+                    }
+                });
+            }
         },
         updateUser: function(id,data,res,next)
         {
@@ -82,22 +137,29 @@ module.exports =
         {
             console.log('Data VERIFICATION');
             console.dir(data);
-            for(let index in data)
+            for(let ind in data)
             {
-                if(data.hasOwnProperty(index))
-                {
-                    if(data[index].length < 3 && data[index].length > 50 && !data[index].match(/[a-zA-Z0-9@_.]/))
-                        return false;
-                    switch(data.index)
+                if(data.hasOwnProperty(ind) && data[ind])
+                {console.log(ind+' '+data[ind]+' '+data[ind].length);
+                    switch(data[ind])
                     {
                         case 'name':
+                            if(data[ind].length < 3 || data[ind].length > 50 || !data[ind].match(/[a-zA-Z0-9@_.]/))
+                                return false;
                             break;
                         case 'email':
-                            if(!data.index.match(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/))
+                            if(!data[ind].match(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/))
                                 return false;
                             break;
                         case 'pwd':
-                            if(!data.index.match())return false;
+                            if(!data[ind].match())return false;
+                            break;
+                        case 'phone':
+                            if(!data[ind].match(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g))
+                                return false;
+                            break;
+                        case 'message':
+                            return (data[ind].length < 5 && data[ind].length > 0);
                             break;
                         default:break;
                     }
