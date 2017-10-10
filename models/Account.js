@@ -68,7 +68,7 @@ module.exports = {
             default:next(null);
         }
     },
-    sendPhoneTransaction:function(data,next){
+    createPhoneTransaction:function(data,next){
         user.getUserById(data.userId,null,(err,usr)=>{
             if(err)next({error:err,data:null});
             else {
@@ -79,10 +79,7 @@ module.exports = {
                                 error: null,
                                 data: 'Please, confirm transaction via Google.'
                                 });
-                            else this.send(aTx, (err, txData) => {
-                                    if (err) next({error: 'Can\'t send transaction', data: null});
-                                    else next({error: null, data: txData});
-                                });
+                            else next({error: null, data: txData});
                         }
                 });
 
@@ -94,7 +91,30 @@ module.exports = {
             next(err,tx);
         });
     },
-    send:(aTx,nx)=>{
-        nx(null,aTx);
+    sendTX:function(data,next){
+        user.getUserByPhone(data.phone,(usr)=>{
+           if(usr.error)next({error:usr.error,data:null});
+           else user.getUserAccounts(usr._id.toString(),(acc)=>{
+               if(acc.error)next({error:acc.error,data:null});
+               else {
+                   if(acc.length === 0)
+                       console.log('create new addresS and ' +
+                           'write to ethAccounts,' +
+                           'unlock(data.pass,data address),' +
+                           'get from tpmTX,' +
+                           'send to addresS,' +
+                           'lock data.adress' +
+                           'send SMS to data.phone');
+                   else console.log('unlock(data.pass,data address),' +
+                       'get from tpmTX,' +
+                       'send to acc[0].address,' +
+                       'lock data.adress' +
+                       'send SMS to data.phone');
+               }
+           });
+        });
     },
+    confirm:function (data,next) {
+        next(data);//if Google confirm users
+    }
 };

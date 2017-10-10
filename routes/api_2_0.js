@@ -98,10 +98,27 @@ router.post('/config',(req,res)=>{
 *       data - string ('Ok') || string() || null
 *       status - string ('wait google authorization...') || ('done')
 * */
-router.post('/transaction',(req,res)=>{
-    accounts.sendPhoneTransaction(req.body,(data)=>{
-        res.json(data);
-    });
+router.post('/transaction/:action',(req,res)=>{
+    switch(req.params.action){
+        case 'create':
+            accounts.createPhoneTransaction(req.body,(data)=>{
+                res.json(data);
+            });
+            break;
+        case 'send':
+            accounts.sendTX(req.body,(data)=>{
+                res.json(data);
+            });
+            break;
+        case 'confirm':
+            accounts.confirm(req.body,(data)=>{
+                res.json(data);
+            });
+            break;
+        default:
+            break;
+    }
+
 });
 
 /*
