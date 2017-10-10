@@ -57,11 +57,14 @@
     
     Test url http://profee.club/api/v2.0
 ###   Api:
-   ###### GET /genesis
-   ###### GET /message          
-   ###### GET /account   
-   ###### GET /config
-   ###### GET /transaction/:action                                 
+   ###### POST /genesis
+   ###### POST /message          
+   ###### POST /account   
+   ###### POST /config
+   ###### POST /transaction/:action 
+   create - send transaction data
+   send - send passphrase if googleAuth == false
+   confirm - send passpfrase and google auth data                                
 
 ###	description:
 
