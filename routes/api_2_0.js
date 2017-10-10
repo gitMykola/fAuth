@@ -63,7 +63,8 @@ router.post('/message',(req,res)=>{// yzjQ
 router.post('/account',(req,res)=>{ // 59dbaad613247c274c33c95b
     if(req.body && req.body.passphrase && req.body.userId)
         accounts.createForPhoneUser({pass:req.body.passphrase,userId:req.body.userId,web3:req.web3},(data)=>{
-            if(data.err)res.json({error:err});
+        console.dir(data);
+            if(data.error)res.json({error:data.error});
             else res.json({error:null,data:data.address});
         });
     else res.json({error:'Wrong data!',data:null});
@@ -81,7 +82,9 @@ router.post('/account',(req,res)=>{ // 59dbaad613247c274c33c95b
 *
 * */
 router.post('/config',(req,res)=>{
-    res.json({error:null,data:null});
+    user.setUserConfig(req.body.userId,JSON.parse(req.body.config),(data)=>{
+        res.json(data);
+    });
 });
 
 /*
@@ -96,7 +99,9 @@ router.post('/config',(req,res)=>{
 *       status - string ('wait google authorization...') || ('done')
 * */
 router.post('/transaction',(req,res)=>{
-    res.json({error:null,data:null});
+    accounts.sendPhoneTransaction(req.body,(data)=>{
+        res.json(data);
+    });
 });
 
 /*

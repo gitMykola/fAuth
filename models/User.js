@@ -101,6 +101,19 @@ module.exports =
                 });
             }
         },
+        setUserConfig:function(userId,config,next){// Don't like to direct inserting to database!!!!!
+            db.get(this.collectionName).findOne({'_id':userId},(err,usr)=>{
+                if(err)next({error:err,data:null});
+                else {
+                    usr.config = config;
+                    db.get(this.collectionName).update({'_id':usr._id},usr,(err,user)=>{
+                        if(err) next({error:err});//'Database error!'});
+                        else next({error:null,data:'Config has setted.'});
+                    });
+                }
+            });
+
+        },
         updateUser: function(id,data,res,next)
         {
             if(this.validateData(data))

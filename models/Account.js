@@ -7,6 +7,7 @@ let express = require('express'),
     user = require('../models/User');
 
 module.exports = {
+    tempTransaction:'tmpTX',
     create:(data, next)=>{
         let udata = data;
         let personal = new Personal(data.web3.currentProvider);
@@ -27,10 +28,8 @@ module.exports = {
     createForPhoneUser:(data, next)=>{
         let udata = data;
         user.getUserAccounts(udata.userId,(dat)=>{
-            if(dat.err)next({error:err,data:null});
-            else {
-                if(dat.err)next({error:'Database error',data:null});
-                else if(dat.data.length === 0){
+            if(dat.err)next({error:'Database error',data:null});
+            else if(dat.data.length === 0){
                         let personal = new Personal(udata.web3.currentProvider);
                         personal.newAccount(udata.pass,(err,acc)=>{
                             if(err)next({err:err,address:null});
@@ -46,7 +45,6 @@ module.exports = {
                             }
                         });
                 }else next({error:'Account already created!',data:null});
-            }
         });
 
     },
@@ -69,6 +67,34 @@ module.exports = {
                 break;
             default:next(null);
         }
-    }
+    },
+    sendPhoneTransaction:function(data,next){
+        user.getUserById(data.userId,null,(err,usr)=>{
+            if(err)next({error:err,data:null});
+            else {
+                this.add(data,(err,aTx)=>{
+                    if(err) next({error:'Can\'t create temporary transaction!',data:null});
+                    else {
+                            if (usr.config.googleAuth) next({
+                                error: null,
+                                data: 'Please, confirm transaction via Google.'
+                                });
+                            else this.send(aTx, (err, txData) => {
+                                    if (err) next({error: 'Can\'t send transaction', data: null});
+                                    else next({error: null, data: txData});
+                                });
+                        }
+                });
 
+            }
+        });
+    },
+    add:function(data,next){
+        db.get(this.tempTransaction).insert(data,(err,tx)=>{
+            next(err,tx);
+        });
+    },
+    send:(aTx,nx)=>{
+        nx(null,aTx);
+    },
 };

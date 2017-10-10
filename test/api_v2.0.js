@@ -89,7 +89,7 @@ describe('db test',()=>{
     it('find',(done)=>{
        // db.get('tmpUsers').find({message:'yzjQ'},(err,tmpUser)=>{
        //     console.dir(tmpUser[0].phone);
-        db.get('users').remove({'name':'PHONE USER'},()=>{});
+        db.get('tmpTX').remove({'phone':'+380949506643'},()=>{});
        // db.get('users').insert({name:"null",phone:"+380"},(err,user)=>{
        //     console.log(user._id.toString());
        // });
