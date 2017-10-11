@@ -89,10 +89,11 @@ describe('db test',()=>{
     it('find',(done)=>{
        // db.get('tmpUsers').find({message:'yzjQ'},(err,tmpUser)=>{
        //     console.dir(tmpUser[0].phone);
-        db.get('tmpTX').remove({'phone':'+380949506643'},()=>{});
+        //db.get('users').remove({'phone':'+380949506643'},()=>{});
        // db.get('users').insert({name:"null",phone:"+380"},(err,user)=>{
        //     console.log(user._id.toString());
        // });
+        db.get('ethAccounts').update({"_id" : "59dbbf404e205c2eb1780a88"},{ "_id" : "59dbbf404e205c2eb1780a88", "user" : "59dbaad613247c274c33c95b", "address" : "0x56cb9adff6b442697b2eb912a73a618a5b3bea8a", "currency" : "ETH" });
             done();
       //  });
     });

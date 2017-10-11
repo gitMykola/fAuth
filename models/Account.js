@@ -100,102 +100,230 @@ module.exports = {
     /*
     * data => {phone:string,
     *           userId:string,
+    *           passphrase:string,
     *           ammount:number}
     * */
     sendTX:function(web3,data,next){
         user.getUserByPhone(data.phone,(usr)=>{
            if(usr.error)next({error:usr.error,data:null});
-           else user.getUserAccounts(usr._id.toString(),(acc)=>{
-               if(acc.error)next({error:acc.error,data:null});
-               else {
-                   let obj = {
-                       web3:data.web3,
-                       sender:data.userId,
-                       senderPass:data.passphrase,
-                       user:usr,
-                       userId:usr._id.toString(),
-                       pass:randStr.generate(8),
-                       ammountTX:data.ammount
-                   };
-                   if(acc.length === 0)
-                   {
-                       console.log('create new addresS and ' +
-                           'write to ethAccounts,' +
-                           'unlock(data.pass,data address),' +
-                           //'get from tpmTX,' +
-                           'send to addresS,' +
-                           'lock data.adress' +
-                           'send SMS to data.phone');
+           else {
+               usr = usr.data;
+               if(!usr) user.setUser({
+                   name:'PHONE USER',
+                   phone:data.phone,
+                   created_at:(new Date()).getTime(),
+                   pwd:'111111',
+               },(err,rslt)=>{
+                   usr = rslt;
+                   user.getUserAccounts(usr._id.toString(),(acc)=>{
+                       if(acc.error)next({error:acc.error,data:null});
+                       else {
+                           let obj = {
+                               web3:web3,
+                               sender:data.userId,
+                               senderPass:data.passphrase,
+                               user:usr,
+                               userId:usr._id.toString(),
+                               pass:randStr.generate(8),
+                               ammountTX:data.ammount
+                           };
+                           console.dir(acc);
+                           acc = acc.data;
+                           if(acc.length === 0)
+                           {
+                               console.log('create new addresS and ' +
+                                   'write to ethAccounts,' +
+                                   'unlock(data.pass,data address),' +
+                                   //'get from tpmTX,' +
+                                   'send to addresS,' +
+                                   'lock data.adress' +
+                                   'send SMS to data.phone');
 
-                        user.getUserAccounts(obj.sender,(accnt)=>{
-                            if(accnt.error) next({error:accnt.error,data:null});
-                            else this.create(obj,(adr)=>{
-                                if(adr.err)next({error:adr.err,data:null});
-                                else {                                          // !check response number accounts
-                                    obj.addressTo = adr.address;
-                                    obj.senderAddress = accnt[0].address;
-                                    let pers = new Personal(obj.web3);
-                                    pers.unlockAccount(obj.senderAddress.address,obj.senderPass,1000,(err,result)=>{
-                                        if(err)next({error:err,data:null});
-                                        else obj.web3.eth.sendTransaction({
-                                            from:obj.senderAddress,
-                                            to:obj.addressTo,
-                                            value:obj.ammountTX
-                                        },(err,hash)=>{
-                                            if(err)next({error:err,data:null});
-                                            else pers.lockAccount(obj.senderAddress,obj.senderPass,(err,r)=>{
-                                                if(err)console.log('Account ' + obj.senderAddress +
-                                                    ' not locked');
-                                                next({error:null,data:'User ' +
-                                                obj.user.phone + ' can recieve his ammount' +
-                                                ' on Ethereum address: ' + obj.addressTo});
-                                            });
-                                        })
-                                    });
-                                }
-                            });
-                        });
-
-                   }
-                   else {
-                       console.log('unlock(data.pass,data address),' +
-                           //'get from tpmTX,' +
-                           'send to acc[0].address,' +
-                           'lock data.adress' +
-                           'send SMS to data.phone');
-                       obj.addressTo = acc[0].address;
-                       user.getUserAccounts(obj.sender,(accnt)=>{
-                           if(accnt.error) next({error:accnt.error,data:null});
-                           else {
-                               obj.senderAddress = accnt[0].address;
-                               let pers = new Personal(obj.web3);
-                               pers.unlockAccount(obj.senderAddress.address, obj.senderPass, 1000, (err, result) => {
-                                   if (err) next({error: err, data: null});
-                                   else obj.web3.eth.sendTransaction({
-                                       from: obj.senderAddress,
-                                       to: obj.addressTo,
-                                       value: obj.ammountTX
-                                   }, (err, hash) => {
-                                       if (err) next({error: err, data: null});
-                                       else pers.lockAccount(obj.senderAddress, obj.senderPass, (err, r) => {
-                                           if (err) console.log('Account ' + obj.senderAddress +
-                                               ' not locked');
-                                           next({
-                                               error: null, data: 'User ' +
-                                               obj.user.phone + ' can recieve his ammount' +
-                                               ' on Ethereum address: ' + obj.addressTo
+                               user.getUserAccounts(obj.sender,(accnt)=>{
+                                   if(accnt.error) next({error:accnt.error,data:null});
+                                   else this.create(obj,(adr)=>{
+                                       if(adr.err)next({error:adr.err,data:null});
+                                       else {                                          // !check response number accounts
+                                           obj.addressTo = adr.address;
+                                           obj.senderAddress = accnt.data[0].address;
+                                           let pers = new Personal(obj.web3);
+                                           pers.unlockAccount(obj.senderAddress.address,obj.senderPass,1000,(err,result)=>{
+                                               if(err)next({error:err,data:null});
+                                               else obj.web3.eth.sendTransaction({
+                                                   from:obj.senderAddress,
+                                                   to:obj.addressTo,
+                                                   value:obj.ammountTX
+                                               },(err,hash)=>{
+                                                   if(err)next({error:err,data:null});
+                                                   else pers.lockAccount(obj.senderAddress,obj.senderPass,(err,r)=>{
+                                                       if(err)console.log('Account ' + obj.senderAddress +
+                                                           ' not locked');
+                                                       next({error:null,data:'User ' +
+                                                       obj.user.phone + ' can recieve his ammount' +
+                                                       ' on Ethereum address: ' + obj.addressTo + ' ' +
+                                                       'with passphrase '+ obj.pass});
+                                                   });
+                                               })
                                            });
+                                       }
+                                   });
+                               });
+
+                           }
+                           else {
+                               console.log('unlock(data.pass,data address),' +
+                                   //'get from tpmTX,' +
+                                   'send to acc[0].address,' +
+                                   'lock data.adress' +
+                                   'send SMS to data.phone');
+                               obj.addressTo = acc[0].address;
+                               user.getUserAccounts(obj.sender,(accnt)=>{
+                                   if(accnt.error) next({error:accnt.error,data:null});
+                                   else {
+                                       obj.senderAddress = accnt[0].address;
+                                       let pers = new Personal(obj.web3);
+                                       pers.unlockAccount(obj.senderAddress.address, obj.senderPass, 1000, (err, result) => {
+                                           if (err) next({error: err, data: null});
+                                           else obj.web3.eth.sendTransaction({
+                                               from: obj.senderAddress,
+                                               to: obj.addressTo,
+                                               value: obj.ammountTX
+                                           }, (err, hash) => {
+                                               if (err) next({error: err, data: null});
+                                               else pers.lockAccount(obj.senderAddress, obj.senderPass, (err, r) => {
+                                                   if (err) console.log('Account ' + obj.senderAddress +
+                                                       ' not locked');
+                                                   next({
+                                                       error: null, data: 'User ' +
+                                                       obj.user.phone + ' can recieve his ammount' +
+                                                       ' on Ethereum address: ' + obj.addressTo
+                                                   });
+                                               });
+                                           })
                                        });
-                                   })
+                                   }
                                });
                            }
-                       });
+                           db.get(this.tempTransaction).remove({phone:obj.user.phone},
+                               (err,rp)=>console.log('Tmp transaction removed.'));
+                       }
+                   });
+               });
+               else user.getUserAccounts(usr._id.toString(),(acc)=>{
+                   console.dir(acc);
+                   if(acc.error)next({error:acc.error,data:null});
+                   else {
+                       let obj = {
+                           web3:web3,
+                           sender:data.userId,
+                           senderPass:data.passphrase,
+                           user:usr,
+                           userId:usr._id.toString(),
+                           pass:randStr.generate(8),
+                           ammountTX:data.ammount
+                       };
+                       acc = acc.data;
+                       if(acc.length === 0)
+                       {
+                           /*console.log('create new addresS and ' +
+                               'write to ethAccounts,' +
+                               'unlock(data.pass,data address),' +
+                               //'get from tpmTX,' +
+                               'send to addresS,' +
+                               'lock data.adress' +
+                               'send SMS to data.phone');*/
+
+                           user.getUserAccounts(obj.sender,(accnt)=>{
+                               if(accnt.error) next({error:accnt.error,data:null});
+                               else this.create(obj,(adr)=>{
+                                   if(adr.err)next({error:adr.err,data:null});
+                                   else {                                          // !check response number accounts
+                                       obj.addressTo = adr.address;
+                                       obj.senderAddress = accnt.data[0].address;
+                                       let pers = new Personal(obj.web3);
+                                       pers.unlockAccount(obj.senderAddress.address,obj.senderPass,1000,(err,result)=>{
+                                           if(err)next({error:err,data:null});
+                                           else obj.web3.eth.sendTransaction({
+                                               from:obj.senderAddress,
+                                               to:obj.addressTo,
+                                               value:obj.ammountTX
+                                           },(err,hash)=>{
+                                               if(err)next({error:err,data:null});
+                                               else pers.lockAccount(obj.senderAddress,obj.senderPass,(err,r)=>{
+                                                   if(err)console.log('Account ' + obj.senderAddress +
+                                                       ' not locked');
+                                                   next({error:null,data:'User ' +
+                                                   obj.user.phone + ' can recieve his ammount' +
+                                                   ' on Ethereum address: ' + obj.addressTo + ' ' +
+                                                   'with passphrase '+ obj.pass});
+                                               });
+                                           })
+                                       });
+                                   }
+                               });
+                           });
+
+                       }
+                       else {
+                           /*console.log('unlock(data.pass,data address),' +
+                               //'get from tpmTX,' +
+                               'send to acc[0].address,' +
+                               'lock data.adress' +
+                               'send SMS to data.phone');*/
+                           obj.addressTo = acc[0].address;
+                           user.getUserAccounts(obj.sender,(accnt)=>{
+                               if(accnt.error) next({error:accnt.error,data:null});
+                               else {
+                                   obj.senderAddress = accnt.data[0].address;
+                                   let pers = new Personal(obj.web3);
+                                   //console.dir(obj);
+                                   pers.unlockAccount(obj.senderAddress, obj.senderPass, 1000, (err, result) => {
+                                       if (err) next({error: err, data: null});
+                                       else {
+                                           let ttx = {
+                                               from: obj.senderAddress,
+                                               to: obj.addressTo,
+                                               value: obj.ammountTX
+                                           };
+                                           //console.dir(ttx);
+                                           obj.web3.eth.sendTransaction(ttx, (err, hash) => {
+                                           if (err) next({error: err, data: null});
+                                           else pers.lockAccount(obj.senderAddress, obj.senderPass, (err, r) => {
+                                               if (err) console.log('Account ' + obj.senderAddress +
+                                                   ' not locked');
+                                               next({
+                                                   error: null, data: 'User ' +
+                                                   obj.user.phone + ' can recieve his ammount' +
+                                                   ' on Ethereum address: ' + obj.addressTo
+                                               });
+                                           });
+                                       })
+                                        }
+                                   });
+                               }
+                           });
+                       }
+                       db.get(this.tempTransaction).remove({phone:obj.user.phone},
+                           (err,rp)=>console.log('Tmp transaction removed.'));
                    }
-               }
-           });
+               });
+           }
+
         });
     },
-    confirm:function (data,next) {
-        next(data);//if Google confirm users
+    confirm:function (web3,data,next) {
+        this.googleLogin({},(resp)=>{
+              if(resp.error)next(resp);
+              else db.get(this.tempTransaction).find({userId:data.userId},(err,tmpTx)=>{
+                  if(err)next({error:err,data:null});
+                  else this.sendTX(web3,tmpTx[0],(r)=>{
+                      next(r);
+                  })
+              });
+        });
+        //next(data);//if Google confirm users
+    },
+    googleLogin:(data,next)=>{
+        next({error:null,auth:'Ok!'});
     }
 };
