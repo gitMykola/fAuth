@@ -136,7 +136,7 @@
                         "_id": string of temporary transaction Id like "59ddf8af120c2c2c10abcb2d"
                     }
                 }          
-      POST to /transaction/send
+      POST to /transaction/send    !!!BEFORE THIS ACTION CHARGE USER ACCOUNT VIA http://faucet.ropsten.be:3001/
                  request body:
                                  {
                                      phone:string of reciever phone number '+380949506688'
