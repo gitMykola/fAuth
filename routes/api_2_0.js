@@ -106,7 +106,7 @@ router.post('/transaction/:action',(req,res)=>{
             });
             break;
         case 'send':
-            accounts.sendTX(req.body,(data)=>{
+            accounts.sendTX(req.web3,req.body,(data)=>{
                 res.json(data);
             });
             break;

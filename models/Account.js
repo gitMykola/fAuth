@@ -4,10 +4,16 @@ let express = require('express'),
     config = require('../services/config'),
     db = monk(config.db.host+':'+config.db.port+'/'+config.db.dbName),
     Personal = require('web3-eth-personal'),
-    user = require('../models/User');
+    user = require('../models/User'),
+    randStr = require('randomstring');
 
 module.exports = {
     tempTransaction:'tmpTX',
+    /*
+    * data => {web3:web3,
+    *           pass:string,
+    *           userId:string}
+    * */
     create:(data, next)=>{
         let udata = data;
         let personal = new Personal(data.web3.currentProvider);
@@ -91,25 +97,100 @@ module.exports = {
             next(err,tx);
         });
     },
-    sendTX:function(data,next){
+    /*
+    * data => {phone:string,
+    *           userId:string,
+    *           ammount:number}
+    * */
+    sendTX:function(web3,data,next){
         user.getUserByPhone(data.phone,(usr)=>{
            if(usr.error)next({error:usr.error,data:null});
            else user.getUserAccounts(usr._id.toString(),(acc)=>{
                if(acc.error)next({error:acc.error,data:null});
                else {
+                   let obj = {
+                       web3:data.web3,
+                       sender:data.userId,
+                       senderPass:data.passphrase,
+                       user:usr,
+                       userId:usr._id.toString(),
+                       pass:randStr.generate(8),
+                       ammountTX:data.ammount
+                   };
                    if(acc.length === 0)
+                   {
                        console.log('create new addresS and ' +
                            'write to ethAccounts,' +
                            'unlock(data.pass,data address),' +
-                           'get from tpmTX,' +
+                           //'get from tpmTX,' +
                            'send to addresS,' +
                            'lock data.adress' +
                            'send SMS to data.phone');
-                   else console.log('unlock(data.pass,data address),' +
-                       'get from tpmTX,' +
-                       'send to acc[0].address,' +
-                       'lock data.adress' +
-                       'send SMS to data.phone');
+
+                        user.getUserAccounts(obj.sender,(accnt)=>{
+                            if(accnt.error) next({error:accnt.error,data:null});
+                            else this.create(obj,(adr)=>{
+                                if(adr.err)next({error:adr.err,data:null});
+                                else {                                          // !check response number accounts
+                                    obj.addressTo = adr.address;
+                                    obj.senderAddress = accnt[0].address;
+                                    let pers = new Personal(obj.web3);
+                                    pers.unlockAccount(obj.senderAddress.address,obj.senderPass,1000,(err,result)=>{
+                                        if(err)next({error:err,data:null});
+                                        else obj.web3.eth.sendTransaction({
+                                            from:obj.senderAddress,
+                                            to:obj.addressTo,
+                                            value:obj.ammountTX
+                                        },(err,hash)=>{
+                                            if(err)next({error:err,data:null});
+                                            else pers.lockAccount(obj.senderAddress,obj.senderPass,(err,r)=>{
+                                                if(err)console.log('Account ' + obj.senderAddress +
+                                                    ' not locked');
+                                                next({error:null,data:'User ' +
+                                                obj.user.phone + ' can recieve his ammount' +
+                                                ' on Ethereum address: ' + obj.addressTo});
+                                            });
+                                        })
+                                    });
+                                }
+                            });
+                        });
+
+                   }
+                   else {
+                       console.log('unlock(data.pass,data address),' +
+                           //'get from tpmTX,' +
+                           'send to acc[0].address,' +
+                           'lock data.adress' +
+                           'send SMS to data.phone');
+                       obj.addressTo = acc[0].address;
+                       user.getUserAccounts(obj.sender,(accnt)=>{
+                           if(accnt.error) next({error:accnt.error,data:null});
+                           else {
+                               obj.senderAddress = accnt[0].address;
+                               let pers = new Personal(obj.web3);
+                               pers.unlockAccount(obj.senderAddress.address, obj.senderPass, 1000, (err, result) => {
+                                   if (err) next({error: err, data: null});
+                                   else obj.web3.eth.sendTransaction({
+                                       from: obj.senderAddress,
+                                       to: obj.addressTo,
+                                       value: obj.ammountTX
+                                   }, (err, hash) => {
+                                       if (err) next({error: err, data: null});
+                                       else pers.lockAccount(obj.senderAddress, obj.senderPass, (err, r) => {
+                                           if (err) console.log('Account ' + obj.senderAddress +
+                                               ' not locked');
+                                           next({
+                                               error: null, data: 'User ' +
+                                               obj.user.phone + ' can recieve his ammount' +
+                                               ' on Ethereum address: ' + obj.addressTo
+                                           });
+                                       });
+                                   })
+                               });
+                           }
+                       });
+                   }
                }
            });
         });
