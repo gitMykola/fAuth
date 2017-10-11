@@ -76,16 +76,17 @@ module.exports = {
     },
     createPhoneTransaction:function(data,next){
         user.getUserById(data.userId,null,(err,usr)=>{
+            console.dir(usr);
             if(err)next({error:err,data:null});
             else {
                 this.add(data,(err,aTx)=>{
-                    if(err) next({error:'Can\'t create temporary transaction!',data:null});
+                    if(err && !usr.config) next({error:'Can\'t create temporary transaction!',data:null});
                     else {
                             if (usr.config.googleAuth) next({
                                 error: null,
                                 data: 'Please, confirm transaction via Google.'
                                 });
-                            else next({error: null, data: txData});
+                            else next({error: null, data: aTx});
                         }
                 });
 

@@ -67,7 +67,89 @@
    confirm - send passpfrase and google auth data                                
 
 ###	description:
-
+    All tests were provided via Postman
+    Serialization of test actions is next:
+     POST to /genesis
+        request body:
+                {
+                    phone: string of phone number like +380945554455
+                }
+        response:
+            {
+                "error": null,
+                "data": random string like "kpOF"
+            }        
+     POST to /message
+        request body:
+                {
+                    message: string from '/genesis' response like "kpOF"
+                }       
+                
+        response:
+                {
+                    "error": null,
+                    "data": {
+                        "error": null,
+                        "data": string with created user Id "59ddeac7653b412412be1da2"
+                    }
+                } 
+     POST to /account
+            request body:
+                {
+                    passphrase:string with user secret (length 8 symbols),
+                    userId:string from '/message' response
+                }                      
+            response:
+                {
+                    "error": null,
+                    "data": string Ethereum transaction address "0xb5486e0ca53C9D0130d1855eCA1F388BB937f2F2"
+                }  
+     POST to /config
+            request body:
+                {
+                    userId:string of user Id like '59ddeac7653b412412be1da2'
+                    config:json {
+                                "googleAuth": boolean flag of Google transaction confirmation like 'false' or 'true'
+                                }
+                }
+            response:
+                {
+                    "error": null,
+                    "data": "Config has setted."
+                }       
+     POST to /transaction/create
+            request body:
+                {
+                    phone:string of reciever phone number '+380949506688'
+                    passphrase:string sender secret like '59ddeac7'
+                    userId:string of user-sender Id like '59ddeac7653b412412be1da2'
+                    ammount:number in wei like '34565'
+                } 
+            response:
+                {
+                    "error": null,
+                    "data": {
+                        "phone": string of phone reviever user number "+380949506699",
+                        "passphrase": string - passphrase of user - sender "59ddeac7",
+                        "userId": "59ddeac7653b412412be1da2",
+                        "ammount": "34565",
+                        "_id": string of temporary transaction Id like "59ddf8af120c2c2c10abcb2d"
+                    }
+                }          
+      POST to /transaction/send
+                 request body:
+                                 {
+                                     phone:string of reciever phone number '+380949506688'
+                                     passphrase:string sender secret like '59ddeac7'
+                                     userId:string of user-sender Id like '59ddeac7653b412412be1da2'
+                                     ammount:number in wei like '34565'
+                                 }
+                 response:
+                        {
+                            "error": null,
+                            "data": string with info about succesfull transaction 
+                        }                  
+                              
   ###### database 'crypto'
   ###### collections:
          'users'   => {
@@ -87,7 +169,11 @@
                             '_id'    = ObjectId("{:userId}") unique field of account address id,
                             'user'   = Id user id string, !!! not ObjectId
                             'address'= String Ethereum account address
-                            }          
+                            }, 
+         'tpmTX'       => {
+                            },
+         'tmpUsers'    => {
+                            }                             
      
      
 ####    Resources:
