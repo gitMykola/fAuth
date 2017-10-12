@@ -22,6 +22,7 @@
 #### SETUP AND INSTALLATION
    ###### ENVIRONMENT
     It was tested on Ubuntu 16.04(x64) and CentOS (centos-release-7-3.1611.el7.centos.x86_64)
+        Debian (release 9.1)
     Disk space should be more 15Gb to use ethereum testnet
     
     All next steps will be executed into terminal connected to 
@@ -50,12 +51,13 @@
     (without '' of course and wait while it'll be done).
     
     Don't forget setup /services/config.js (there're you should check mongo settings, it's apply 
-    to mongo connection string. 
+    to mongo connection string and host + port.
+     
               
     
 #####   
     
-    Test url http://profee.club/api/v2.0
+    Test url http://194.71.227.15/api/v2.0
 ###   Api:
    ###### POST /genesis
    ###### POST /message          
@@ -136,7 +138,7 @@
                         "_id": string of temporary transaction Id like "59ddf8af120c2c2c10abcb2d"
                     }
                 }          
-      POST to /transaction/send    !!!BEFORE THIS ACTION CHARGE USER ACCOUNT VIA http://faucet.ropsten.be:3001/
+      POST to /transaction/send    !!!BEFORE THIS ACTION INSSUE USER ACCOUNT VIA http://faucet.ropsten.be:3001/
                  request body:
                                  {
                                      phone:string of reciever phone number '+380949506688'
@@ -171,8 +173,18 @@
                             'address'= String Ethereum account address
                             }, 
          'tpmTX'       => {
+                            '_id'    = ObjectId("{:userId}") unique field of temporary transaction id,
+                            'phone'  = String with user-reciever phone number
+                            'passphrase'= String with user-sender secret. It's mean to ask about this one, 
+                                            when user going to send to somebody any ammount. 
+                            'userId'    = String with user-sender Id
+                            'ammount'   = Number sending value in wei(ethereum cents) 
                             },
          'tmpUsers'    => {
+                            '_id'    = ObjectId("{:userId}") unique field of user-without-message-confirmation id,
+                            'phone'  = String with user-reciever phone number
+                            'message'= String random message for user confirmation
+                            'created_at'=Number milliseconds like Unix timestamp, when user created
                             }                             
      
      
