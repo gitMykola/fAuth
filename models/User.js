@@ -20,6 +20,12 @@ module.exports =
                 next(err,(err)?null:user);
             });
         },
+        getUserByName: function(name,res,next)
+        {
+            db.get(this.collectionName).findOne({'name':name},function(err,user){
+                next(err,(err)?null:user);
+            });
+        },
         getUserByEmail: function(email,res,next)
         {
             if(this.validateData({email:email}))
@@ -205,8 +211,8 @@ module.exports =
                 config.crypt.keyLen,
                 config.crypt.alg).toString('hex');
         },
-        verifyPassword:(pass,user,vf)=>{
+        verifyPassword:function(pass,user){
             //return pass === vf(user.pwd);
-            return user.pwd.pass === vf(pass,user.pwd.salt)
+            return pass === this.decrypt(user.pwd.pass,user.pwd.salt)
         },
     };

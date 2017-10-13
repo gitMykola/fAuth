@@ -4,6 +4,9 @@ let request = require('supertest'),
     config = require('../services/config'),
     db = monk(config.db.host+':'+config.db.port+'/'+config.db.dbName),
     user = require('../models/User'),
+    client = require('../models/Client'),
+    atoken = require('../models/AccessToken'),
+    rtoken = require('../models/RefreshToken'),
     app = require('../app');
 
 describe('Testing cryptocoin api 2.0',()=>{
@@ -79,7 +82,7 @@ describe('getUserByPhone',()=>{
         });
     });
     it('validate',(done)=> {
-        let vf = user.validateData({message:'yzjQ'})
+        let vf = user.validateData({message:'yzjQ'});
             console.log(vf);
             expect(vf).to.equal(true);
             done();
@@ -93,8 +96,30 @@ describe('db test',()=>{
        // db.get('users').insert({name:"null",phone:"+380"},(err,user)=>{
        //     console.log(user._id.toString());
        // });
-        db.get('ethAccounts').update({"_id" : "59dbbf404e205c2eb1780a88"},{ "_id" : "59dbbf404e205c2eb1780a88", "user" : "59dbaad613247c274c33c95b", "address" : "0x56cb9adff6b442697b2eb912a73a618a5b3bea8a", "currency" : "ETH" });
-            done();
+       // db.get('ethAccounts').update({"_id" : "59dbbf404e205c2eb1780a88"},{ "_id" : "59dbbf404e205c2eb1780a88", "user" : "59dbaad613247c274c33c95b", "address" : "0x56cb9adff6b442697b2eb912a73a618a5b3bea8a", "currency" : "ETH" });
+        /*client.setClient({name:'Test Client 2!',secret:'12347777'},(clt)=>{
+            console.log('DONE!' + clt.client._id);
+            console.dir(clt.client);
+            console.log('Id '+clt.client._id);
+            client.getClientById(clt.client._id,(cl)=>{
+                console.dir(cl.client);
+                done();
+            })
+        });*/
+        atoken.setToken({userId:'59dbaad613247c274c33c95b',
+                            clientId:'59e0cbc1d5c98a2ee65b1a66',
+                            token:'1234123456785678',
+                            created_at: Date.now(),
+        },(tkn)=>{
+            console.log('DONE!' + tkn.token._id);
+            console.dir(tkn.token);
+            console.log('Id '+tkn.token._id);
+            atoken.getTokenById(tkn.token._id,(tk)=>{
+                console.dir(tk.token);
+                done();
+            })
+        });
+
       //  });
     });
 });
