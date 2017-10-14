@@ -16,6 +16,7 @@
     "express-session": "^1.15.6",
     "googleapis": "^22.2.0",
     "jade": "~1.11.0",
+    "js-md5": "^0.6.1",
     "monk": "^6.0.4",
     "morgan": "~1.8.1",
     "node-compass": "^0.2.3",

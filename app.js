@@ -22,7 +22,8 @@ let auth = require('./routes/auth'),
     }),
     Web3 = require('web3'),
     api = require('./routes/api_1_0'),
-    api2 = require('./routes/api_2_0');
+    api2 = require('./routes/api_2_0'),
+    api3 = require('./routes/api_3_0');
 
 let app = express(),
     startProcess = require('./services/start');
@@ -86,6 +87,15 @@ app.get('/api/userInfo',
 
 
 //    app.use('/', index);
+      app.get('/',(req,res)=>{
+          res.json({
+              'c1':config.app.host + '/api/v3.0/phonevalid',
+              'c2':config.app.host + '/api/v3.0/smsconfirm',
+              'c3':config.app.host + '/api/v3.0/password',
+              'c4':config.app.host + '/api/v3.0/oauth2',
+          });
+      });
+      app.use('/api/v3.0', api3);
 //    app.use('/api/v1.0', api);
 //    app.use('/api/v2.0', api2);
 //    app.use('/auth',auth);

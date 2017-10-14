@@ -44,6 +44,16 @@ module.exports =
                 });
             }
         },
+        getTmpUserByPhone: function(phone,next){
+            let err = 'Invalid Phone!';
+            if(!this.validateData({phone:phone}))next({error:err});
+            else {
+                db.get(this.tempCollection).findOne({'phone':phone},(err,user)=>{
+                    if(err)next({error:'Database error!'});
+                    else next({error:null,data:user});
+                });
+            }
+        },
         getAllUsers: function(res,next)
         {
             console.log('getAll');
@@ -54,11 +64,11 @@ module.exports =
         setTempUser: function(data,next){
             if(!this.validateData(data))next({error:'Data invalid'});
             else {
-                data.message = rnd.generate(4);
+                data.message = rnd.generate(5);
                 data.created_at = (new Date()).getTime();
                 db.get(this.tempCollection).insert(data,(err,tmpUser)=>{
                     if(err)next({error:'Database error.'});
-                    else next({error:null,data:data.message});
+                    else next({error:null,data:data.message,u1:tmpUser._id.toString()});
                 });
             }
         },
@@ -160,7 +170,7 @@ module.exports =
             {
                 if(data.hasOwnProperty(ind) && data[ind])
                 {console.log(ind+' '+data[ind]+' '+data[ind].length);
-                    switch(data[ind])
+                    switch(ind)
                     {
                         case 'name':
                             if(data[ind].length < 3 || data[ind].length > 50 || !data[ind].match(/[a-zA-Z0-9@_.]/))
@@ -171,10 +181,10 @@ module.exports =
                                 return false;
                             break;
                         case 'pwd':
-                            if(!data[ind].match())return false;
+                            //if(!data[ind].match())return false;
                             break;
                         case 'phone':
-                            if(!data[ind].match(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g))
+                            if(!data[ind].match(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g) || data[ind].length !== 13)
                                 return false;
                             break;
                         case 'message':

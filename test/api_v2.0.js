@@ -7,7 +7,8 @@ let request = require('supertest'),
     client = require('../models/Client'),
     atoken = require('../models/AccessToken'),
     rtoken = require('../models/RefreshToken'),
-    app = require('../app');
+    app = require('../app'),
+    md5 = require('js-md5');
 
 describe('Testing cryptocoin api 2.0',()=>{
 
@@ -106,6 +107,8 @@ describe('db test',()=>{
                 done();
             })
         });*/
+        console.log(md5('59e22584159fe127acf1a8e7'));
+        /*
         atoken.setToken({userId:'59dbaad613247c274c33c95b',
                             clientId:'59e0cbc1d5c98a2ee65b1a66',
                             token:'1234123456785678',
@@ -118,7 +121,7 @@ describe('db test',()=>{
                 console.dir(tk.token);
                 done();
             })
-        });
+        });*/
 
       //  });
     });
