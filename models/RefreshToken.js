@@ -35,9 +35,11 @@ module.exports = {
             });
     },
     removeToken:function(rtoken,next){
-        db.get(this.collection).remove({token:rtoken},(err)=>{
+        console.dir(rtoken);
+        db.get(this.collection).remove(rtoken,(err)=>{
+            console.dir(err);
             if(err) next({error:err});
-            else next({eror:null});
+            else next({error:null});
         })
     },
     /*

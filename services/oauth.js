@@ -15,14 +15,14 @@ passport.use(new BasicStrategy(
             if (!clt.client) { return next(null, false); }
             if (clt.client.secret !== password) { return next(null, false); }
 
-            return next(null, ctl.client);
+            return next(null, clt.client);
         });
     }
 ));
 
 passport.use(new ClientPasswordStrategy(
     function(clientId, clientSecret, next) {
-        Client.getClientById({ _id: clientId }, function(clt) {
+        Client.getClientById(clientId, function(clt) {
             if (clt.error) { return next(clt.error); }
             if (!clt.client) { return next(null, false); }
             if (clt.client.secret !== clientSecret) { return next(null, false); }
@@ -34,12 +34,12 @@ passport.use(new ClientPasswordStrategy(
 
 passport.use(new BearerStrategy(
     function(accessToken, next) {
-        AccessToken.getTokenByToken({ token: accessToken }, function(tkn) {
+        AccessToken.getTokenByToken(accessToken, function(tkn) {
             if (tkn.error) { return next(tkn.error); }
             if (!tkn.token) { return next(null, false); }
 
             if( Math.round((Date.now()-tkn.token.created_at)/1000) > config.app.tokenLive ) {
-                AccessToken.removeToken({ token: accessToken }, function (err) {
+                AccessToken.removeToken({token:accessToken}, function (err) {
                     if (err) return next(err);
                 });
                 return next(null, false, { message: 'Token expired' });

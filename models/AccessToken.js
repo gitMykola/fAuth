@@ -35,9 +35,9 @@ module.exports = {
             });
     },
     removeToken:function(atoken,next){
-        db.get(this.collection).remove({token:atoken},(err)=>{
+        db.get(this.collection).remove(atoken,(err)=>{
           if(err) next({error:err});
-          else next({eror:null});
+          else next({error:null});
         })
     },
     /*

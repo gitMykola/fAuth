@@ -14,13 +14,13 @@ module.exports =
         collectionName:'users',
         tempCollection:'tmpUsers',
         collectionEthereumAccounts:'ethAccounts',
-        getUserById: function(id,res,next)
+        getUserById: function(id,next)
         {
             db.get(this.collectionName).findOne({'_id':id},function(err,user){
                 next(err,(err)?null:user);
             });
         },
-        getUserByName: function(name,res,next)
+        getUserByName: function(name,next)
         {
             db.get(this.collectionName).findOne({'name':name},function(err,user){
                 next(err,(err)?null:user);
@@ -213,6 +213,6 @@ module.exports =
         },
         verifyPassword:function(pass,user){
             //return pass === vf(user.pwd);
-            return pass === this.decrypt(user.pwd.pass,user.pwd.salt)
+            return user.pwd.pass === this.decrypt(pass,user.pwd.salt)
         },
     };

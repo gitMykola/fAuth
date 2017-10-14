@@ -61,11 +61,37 @@ app.use(function(req,res,next){
     next();
     });
 
-    app.use('/', index);
-    app.use('/api/v1.0', api);
-    app.use('/api/v2.0', api2);
-    app.use('/auth',auth);
-    app.use('/users', users);
+
+
+let oauth2          = require('./services/oauth2'),
+    passport            = require('passport');
+
+app.use(passport.initialize());
+
+require('./services/oauth');
+
+app.post('/oauth/token', oauth2.token);
+
+app.get('/api/userInfo',
+    passport.authenticate('bearer', { session: false }),
+    function(req, res) {
+        // req.authInfo is set using the `info` argument supplied by
+        // `BearerStrategy`.  It is typically used to indicate scope of the token,
+        // and used in access control checks.  For illustrative purposes, this
+        // example simply returns the scope in the response.
+        res.json({ user_id: req.user.userId, name: req.user.username, scope: req.authInfo.scope })
+    }
+);
+
+
+
+//    app.use('/', index);
+//    app.use('/api/v1.0', api);
+//    app.use('/api/v2.0', api2);
+//    app.use('/auth',auth);
+//    app.use('/users', users);
+
+
 
 
     // catch 404 and forward to error handler
@@ -84,7 +110,7 @@ app.use(function(req,res,next){
       // render the error page
       res.status(err.status || 500);
       console.dir(err);
-      res.render('error');
+      //res.json({error:'error'});
     });
 
 // Starting database & global object data refreshing process
