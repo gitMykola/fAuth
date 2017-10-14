@@ -76,7 +76,7 @@ module.exports =
         {
             if(this.validateData(data))
             {
-                console.dir(data);
+                //console.dir(data);
                 if(data.pwd) data.pwd = this.encrypt(data.pwd);
                 db.get(this.collectionName).insert(data,function(err,user){
                     if(err) next(err, null);
@@ -141,8 +141,14 @@ module.exports =
         },
         deleteUser: function(id,res,next)
         {
-            db.get(this.collectionName).delete({'_id':id},function(err,user){
-                next(err,user);
+            db.get(this.collectionName).remove({'_id':id},function(err){
+                next(err);
+            });
+        },
+        deleteTmpUser: function(id,next)
+        {
+            db.get(this.tempCollection).remove({'_id':id},function(err){
+                next(err);
             });
         },
         addUserAccount:(data,next)=>{
@@ -173,24 +179,25 @@ module.exports =
                     switch(ind)
                     {
                         case 'name':
-                            if(data[ind].length < 3 || data[ind].length > 50 || !data[ind].match(/[a-zA-Z0-9@_.]/))
+                            if(typeof(data[ind]) !== 'string' || data[ind].length < 3 || data[ind].length > 50 || !data[ind].match(/[a-zA-Z0-9@_.]/))
                                 return false;
                             break;
                         case 'email':
-                            if(!data[ind].match(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/))
+                            if(typeof(data[ind]) !== 'string' || !data[ind].match(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/))
                                 return false;
                             break;
                         case 'pwd':
                             //if(!data[ind].match())return false;
                             break;
                         case 'phone':
-                            if(!data[ind].match(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g) || data[ind].length !== 13)
+                            if(typeof(data[ind]) !== 'string' || !data[ind].match(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g) || data[ind].length !== 13)
                                 return false;
                             break;
                         case 'message':
-                            return (data[ind].length < 5 && data[ind].length > 0);
+                            return (typeof(data[ind]) !== 'string' || data[ind].length < 5 && data[ind].length > 0);
                             break;
-                        default:break;
+                        default:
+                            break;
                     }
                 }
             }
