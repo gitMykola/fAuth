@@ -34,7 +34,7 @@ module.exports = {
     createForPhoneUser:(data, next)=>{
         let udata = data;
         user.getUserAccounts(udata.userId,(dat)=>{
-            if(dat.err)next({error:'Database error',data:null});
+            if(dat.err)next({error:'Database error',address:null});
             else if(dat.data.length === 0){
                         let personal = new Personal(udata.web3.currentProvider);
                         personal.newAccount(udata.pass,(err,acc)=>{
@@ -50,7 +50,7 @@ module.exports = {
                                 });
                             }
                         });
-                }else next({error:'Account already created!',data:null});
+                }else next({error:'Account already created!',address:null});
         });
 
     },

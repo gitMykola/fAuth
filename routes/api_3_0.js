@@ -1,7 +1,9 @@
 let express = require('express'),
     config = require('../services/config'),
     User = require('../models/User'),
+    Accounts = require('../models/Account'),
     md5 = require('js-md5'),
+    url = require('url'),
     router = express.Router();
 /*
 * @body:{
@@ -130,8 +132,40 @@ router.post('/smsconfirm',(req,res)=>{
         }
     })
 });
-//
-router.post('/password',(req,res)=>{});
+/*
+* @body:{
+*           p001: - b870da30,
+*           sp: - ,
+*       }
+*
+* */
+router.post('/password',(req,res)=> {
+    res.resData = {rp: null, rp1: null};
+    if (!req.body.p001 || typeof(req.body.p001) !== 'string' || req.body.p001.length < 8) {
+        res.resData.rp = 0;
+        res.json(res.resData);
+    } else {
+        //console.log(req.query.sp);
+        //console.log(md5(req.body.sp));
+        if(req.query.sp !== req.body.sp){
+            res.resData.rp = 3;
+            res.json(res.resData);
+        } else {
+            Accounts.createForPhoneUser({
+                            userId:req.body.sp,
+                            web3:req.web3,
+                            pass:req.body.password,
+            },(acc)=>{
+                if(acc.error){
+                    res.resData.rp = acc.error;
+                    res.json(res.resData);
+                }else{
+                    res.json(res.resData);
+                }
+            });
+        }
+    }
+});
 router.post('/oauth2',(req,res)=>{});
 
 module.exports = router;
