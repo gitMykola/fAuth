@@ -54,11 +54,8 @@
     to mongo connection string and host + port.
      
               
-    
-#####   
-    
-    Test url http://194.71.227.15/api/v2.0
 ###   Api:
+#####   Test url http://194.71.227.15/api/v2.0
    ###### POST /genesis
    ###### POST /message          
    ###### POST /account   
@@ -67,6 +64,14 @@
    create - send transaction data
    send - send passphrase if googleAuth == false
    confirm - send passpfrase and google auth data                                
+
+#####   Test url http://194.71.227.15/api/v3.0
+   ###### GET /
+   ###### POST /phonevalid          
+   ###### POST /smsconfirm  
+   ###### POST /password
+   ###### POST /oauth2 
+
 
 ###	description:
     All tests were provided via Postman
