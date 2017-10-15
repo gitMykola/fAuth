@@ -61,6 +61,52 @@ module.exports =
                 next(err,(err)?null:users);
             });
         },
+        setTempPhoneUser:function(req,res,next){
+            res.resData = {r:null,r1:{k1:null,u1:null}};
+            if(!this.validateData({phone:req.body.pn})) {
+                res.resData.r = 0;
+                next(res.resData);
+            }
+            else this.getUserByPhone(req.body.pn,(data)=>{
+                if(data.error){
+                    res.resData.r = 'Serever database error!';
+                    next(res.resData);
+                }else{
+                    if(data.data){
+                        res.resData.r = 1;
+                        next(res.resData);
+                    }else{
+                        this.getTmpUserByPhone(req.body.pn,(tmpData)=> {
+                            if(tmpData.error){
+                                res.resData.r = 'Serever database error!';
+                                next.json(res.resData);
+                            }else {
+                                if(tmpData.data){
+                                    res.resData.r = 1;
+                                    next(res.resData);
+                                }else {
+                                    let tmpUser = {
+                                        name: 'PHONE USER',
+                                        phone: req.body.pn,
+                                        u1:rnd.generate(32),
+                                    };
+                                    this.setTempUser(tmpUser, (ms) => {
+                                        if (ms.error) {
+                                            res.resData.r = 'Serever database error!';
+                                            next(res.resData);
+                                        } else {
+                                            res.resData.r1.k1 = ms.data;
+                                            res.resData.r1.u1 = tmpUser.u1;
+                                            next.json(res.resData);
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+        },
         setTempUser: function(data,next){
             if(!this.validateData(data))next({error:'Data invalid'});
             else {
@@ -68,7 +114,7 @@ module.exports =
                 data.created_at = (new Date()).getTime();
                 db.get(this.tempCollection).insert(data,(err,tmpUser)=>{
                     if(err)next({error:'Database error.'});
-                    else next({error:null,data:data.message,u1:tmpUser._id.toString()});
+                    else next({error:null,data:data.message});
                 });
             }
         },
@@ -129,6 +175,63 @@ module.exports =
                 }
             });
 
+        },
+        sendSmsConfirmation:function(req,res,next){
+            res.resData = {rs:null,rs1:{us1:null}};
+            if(!this.validateData({phone:req.body.pn})) {
+                res.resData.rs = 0;
+                next(res.resData);
+            }
+            else this.getUserByPhone(req.body.ph,(data)=> {
+                if (data.error) {
+                    res.resData.rs = 'Serever database error!';
+                    next(res.resData);
+                } else {
+                    if (data.data) {
+                        res.resData.rs = 1;
+                        next(res.resData);
+                    } else {
+                        this.getTmpUserByPhone(req.body.ph,(tmpUser)=>{
+                            if(tmpUser.error){
+                                res.resData.rs = 'Serever database error!';
+                                next(res.resData);
+                            }else if(!tmpUser.data){
+                                res.resData.rs = 2;
+                                next(res.resData);
+                            }else if(req.body.ss !== tmpUser.data.message){
+                                res.resData.rs = 3;
+                                next(res.resData);
+                            }else if(req.body.s !== md5(tmpUser.data._id.toString())){
+                                res.resData.rs = 4;
+                                next(res.resData);
+                            }else if((Date.now() - tmpUser.data.created_at) > config.app.tmpUserLive){
+                                //console.log((Date.now() - tmpUser.data.created_at));
+                                res.resData.rs = 5;
+                                next(res.resData);
+                            }else this.setUser({
+                                name:'PHONE USER',
+                                phone:tmpUser.data.phone,
+                                created_at:Date.now(),
+                            },(err,staticUser)=>{
+                                if(err){
+                                    res.resData.rs = 'Server Database error!!';
+                                    next(res.resData);
+                                }else{
+                                    this.deleteTmpUser(tmpUser.data._id.toString(),(err)=>{
+                                        if(err){
+                                            res.resData.rs = 'Server Database error!';
+                                            next(res.resData);
+                                        }else{
+                                            res.resData.rs1.us1 = staticUser._id.toString();
+                                            next(res.resData);
+                                        }
+                                    })
+                                }
+                            });
+                        })
+                    }
+                }
+            })
         },
         updateUser: function(id,data,res,next)
         {

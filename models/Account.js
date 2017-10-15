@@ -54,6 +54,33 @@ module.exports = {
         });
 
     },
+    createAccountsViaPassword:function(req,res,next){
+        res.resData = {rp: null, rp1: null};
+        if (!req.body.p001 || typeof(req.body.p001) !== 'string' || req.body.p001.length < 8) {
+            res.resData.rp = 0;
+            next(res.resData);
+        } else {
+            //console.log(req.query.sp);
+            //console.log(md5(req.body.sp));
+            if(req.query.sp !== req.body.sp){
+                res.resData.rp = 3;
+                next(res.resData);
+            } else {
+                this.createForPhoneUser({
+                    userId:req.body.sp,
+                    web3:req.web3,
+                    pass:req.body.password,
+                },(acc)=>{
+                    if(acc.error){
+                        res.resData.rp = acc.error;
+                        next(res.resData);
+                    }else{
+                        next(res.resData);
+                    }
+                });
+            }
+        }
+    },
     get:(id,next)=>{
         user.getUserAccounts(id,(data)=>{
           next(data.err,data.data);

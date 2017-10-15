@@ -4,6 +4,7 @@ let express = require('express'),
     Accounts = require('../models/Account'),
     md5 = require('js-md5'),
     url = require('url'),
+    rnd = require('randomstring'),
     router = express.Router();
 /*
 * @body:{
@@ -18,6 +19,11 @@ let express = require('express'),
 *       }
 * */
 router.post('/phonevalid',(req,res)=>{
+    User.setTempPhoneUser(req,res,(data)=>{
+        res.json(data);
+    })
+});
+/*router.post('/phonevalid',(req,res)=>{
     res.resData = {r:null,r1:{k1:null,u1:null}};
     if(!User.validateData({phone:req.body.pn})) {
         res.resData.r = 0;
@@ -44,6 +50,7 @@ router.post('/phonevalid',(req,res)=>{
                             let tmpUser = {
                                 name: 'PHONE USER',
                                 phone: req.body.pn,
+                                u1:rnd.generate(32),
                             };
                             User.setTempUser(tmpUser, (ms) => {
                                 if (ms.error) {
@@ -51,7 +58,7 @@ router.post('/phonevalid',(req,res)=>{
                                     res.json(res.resData);
                                 } else {
                                     res.resData.r1.k1 = ms.data;
-                                    res.resData.r1.u1 = ms.u1;
+                                    res.resData.r1.u1 = tmpUser.u1;
                                     res.json(res.resData);
                                 }
                             })
@@ -61,7 +68,7 @@ router.post('/phonevalid',(req,res)=>{
             }
         }
     })
-});
+});*/
 /*
 * OEIww
 * 59e22584159fe127acf1a8e7
@@ -76,6 +83,11 @@ router.post('/phonevalid',(req,res)=>{
 *
 * */
 router.post('/smsconfirm',(req,res)=>{
+    User.sendSmsConfirmation(req,res,(data)=>{
+        res.json(data);
+    })
+});
+/*router.post('/smsconfirm',(req,res)=>{
     res.resData = {rs:null,rs1:{us1:null}};
     if(!User.validateData({phone:req.body.pn})) {
         res.resData.rs = 0;
@@ -131,7 +143,7 @@ router.post('/smsconfirm',(req,res)=>{
             }
         }
     })
-});
+});*/
 /*
 * @body:{
 *           p001: - b870da30,
@@ -139,6 +151,11 @@ router.post('/smsconfirm',(req,res)=>{
 *       }
 *
 * */
+router.post('/password',(req,res)=>{
+    Accounts.createAccountsViaPassword(req,res,(data)=>{
+        res.json(data);
+    })
+});
 router.post('/password',(req,res)=> {
     res.resData = {rp: null, rp1: null};
     if (!req.body.p001 || typeof(req.body.p001) !== 'string' || req.body.p001.length < 8) {

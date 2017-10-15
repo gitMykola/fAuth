@@ -54,7 +54,7 @@
     to mongo connection string and host + port.
      
               
-###   Api:
+###   API:
 #####   Test url http://194.71.227.15/api/v2.0
    ###### POST /genesis
    ###### POST /message          
