@@ -7,7 +7,8 @@ let express = require('express'),
     config = require('../services/config'),
     db = monk(config.db.host+':'+config.db.port+'/'+config.db.dbName),
     cryptor = require('crypto'),
-    rnd = require('randomstring');
+    rnd = require('randomstring'),
+    valid = require('../services/validation');
 
 module.exports =
     {
@@ -62,50 +63,51 @@ module.exports =
             });
         },
         setTempPhoneUser:function(req,res,next){
-            res.resData = {r:null,r1:{k1:null,u1:null}};
-            if(!this.validateData({phone:req.body.pn})) {
-                res.resData.r = 0;
-                next(res.resData);
-            }
-            else this.getUserByPhone(req.body.pn,(data)=>{
-                if(data.error){
-                    res.resData.r = 'Serever database error!';
+            res.resData = {r:valid.format(req.body),r1:{k1:null,u1:null}};
+            if(!res.resData.r)next(res.resData);
+            else if(!this.validateData({phone:req.body.pn})) {
+                    res.resData.r = 0;
                     next(res.resData);
-                }else{
-                    if(data.data){
-                        res.resData.r = 1;
+                }
+                 else this.getUserByPhone(req.body.pn,(data)=>{
+                    if(data.error){
+                        res.resData.r = 'Serever database error!';
                         next(res.resData);
                     }else{
-                        this.getTmpUserByPhone(req.body.pn,(tmpData)=> {
-                            if(tmpData.error){
-                                res.resData.r = 'Serever database error!';
-                                next.json(res.resData);
-                            }else {
-                                if(tmpData.data){
-                                    res.resData.r = 1;
-                                    next(res.resData);
+                        if(data.data){
+                            res.resData.r = 1;
+                            next(res.resData);
+                        }else{
+                            this.getTmpUserByPhone(req.body.pn,(tmpData)=> {
+                                if(tmpData.error){
+                                    res.resData.r = 'Serever database error!';
+                                    next.json(res.resData);
                                 }else {
-                                    let tmpUser = {
-                                        name: 'PHONE USER',
-                                        phone: req.body.pn,
-                                        u1:rnd.generate(32),
-                                    };
-                                    this.setTempUser(tmpUser, (ms) => {
-                                        if (ms.error) {
-                                            res.resData.r = 'Serever database error!';
-                                            next(res.resData);
-                                        } else {
-                                            res.resData.r1.k1 = ms.data;
-                                            res.resData.r1.u1 = tmpUser.u1;
-                                            next.json(res.resData);
-                                        }
-                                    })
+                                    if(tmpData.data){
+                                        res.resData.r = 1;
+                                        next(res.resData);
+                                    }else {
+                                        let tmpUser = {
+                                            name: 'PHONE USER',
+                                            phone: req.body.pn,
+                                            u1:rnd.generate(32),
+                                        };
+                                        this.setTempUser(tmpUser, (ms) => {
+                                            if (ms.error) {
+                                                res.resData.r = 'Serever database error!';
+                                                next(res.resData);
+                                            } else {
+                                                res.resData.r1.k1 = ms.data;
+                                                res.resData.r1.u1 = tmpUser.u1;
+                                                next.json(res.resData);
+                                            }
+                                        })
+                                    }
                                 }
-                            }
-                        })
+                            })
+                        }
                     }
-                }
-            })
+                })
         },
         setTempUser: function(data,next){
             if(!this.validateData(data))next({error:'Data invalid'});
