@@ -5,7 +5,8 @@ let express = require('express'),
     md5 = require('js-md5'),
     url = require('url'),
     rnd = require('randomstring'),
-    router = express.Router();
+    router = express.Router(),
+    jwtAuth = require('../services/jwtAuth');
 /*
 * @body:{
 *           pn: +380931311333
@@ -53,7 +54,18 @@ router.post('/password',(req,res)=>{
         res.json(data);
     })
 });
+/*
+* JWT authorization
+* */
+router.post('/auth',(req,res)=>{
+    jwtAuth(req,res,(auth)=>{
+        if(auth.token){
+            res.setHeader('WWW-Authenticate',auth.token);
+            res.json({rp:null});
+        }else res.json({rp:auth.auth});
 
+    })
+});
 router.post('/oauth2',(req,res)=>{});
 
 module.exports = router;
