@@ -5,7 +5,8 @@ let express = require('express'),
     db = monk(config.db.host+':'+config.db.port+'/'+config.db.dbName),
     Personal = require('web3-eth-personal'),
     user = require('../models/User'),
-    randStr = require('randomstring');
+    randStr = require('randomstring'),
+    md5 = require('js-md5');
 
 module.exports = {
     tempTransaction:'tmpTX',
@@ -31,53 +32,62 @@ module.exports = {
             }
         });
     },
-    createForPhoneUser:(data, next)=>{
-        let udata = data;
-        user.getUserAccounts(udata.userId,(dat)=>{
+    createForPhoneUser:function(uObj, next){
+        user.getUserAccounts(uObj.userC._id.toString(),(dat)=>{
             if(dat.err)next({error:'Database error',address:null});
             else if(dat.data.length === 0){
-                        let personal = new Personal(udata.web3.currentProvider);
-                        personal.newAccount(udata.pass,(err,acc)=>{
-                            if(err)next({err:err,address:null});
+                        let personal = new Personal(uObj.web3.currentProvider);
+                        personal.newAccount(uObj.pass,(err,acc)=>{
+                            if(err)next({error:err,address:null});
                             else {
                                 //console.log(id+'');
-                                let ldata = {userId:udata.userId,
+                                let ldata = {userId:uObj.userC._id.toString(),
                                     address:acc,
                                     currency:'ETH'};
                                 user.addUserAccount(ldata,(d)=>{
                                     console.dir(ldata);
-                                    next({address:ldata.address});
+                                    next({error:null,address:ldata.address});
                                 });
                             }
                         });
-                }else next({error:'Account already created!',address:null});
+                }else next({error:'Exists!',address:null});
         });
 
     },
     createAccountsViaPassword:function(req,res,next){
         res.resData = {rp: null, rp1: null};
-        if (!req.body.p001 || typeof(req.body.p001) !== 'string' || req.body.p001.length < 8) {
+        if (!user.validateData(req.body)) {
             res.resData.rp = 0;
             next(res.resData);
         } else {
             //console.log(req.query.sp);
             //console.log(md5(req.body.sp));
-            if(req.query.sp !== req.body.sp){
+            if(md5(req.query.sp) !== req.body.sp){
                 res.resData.rp = 3;
                 next(res.resData);
             } else {
-                this.createForPhoneUser({
-                    userId:req.body.sp,
-                    web3:req.web3,
-                    pass:req.body.password,
-                },(acc)=>{
-                    if(acc.error){
-                        res.resData.rp = acc.error;
+                user.getUserByParam({u1:req.query.sp},(usr)=>{
+                    if(usr.error){
+                        res.resData.rp = 3;
                         next(res.resData);
-                    }else{
-                        next(res.resData);
+                    }else {
+                        usr.data.pwd = user.encrypt(req.body.p001);
+                        user.updatePhoneUser(usr.data._id,usr.data,(err,userK)=>{
+                                this.createForPhoneUser({
+                                    userC: usr.data,
+                                    web3: req.web3,
+                                    pass: req.body.p001,
+                                }, (acc) => {
+                                    if (acc.error) {
+                                        res.resData.rp = (acc.error === 'Exists!') ? 1 : 6;// Database || ETH Error
+                                        next(res.resData);
+                                    } else {
+                                        next(res.resData);
+                                    }
+                                })
+                        })
                     }
-                });
+                })
             }
         }
     },

@@ -53,6 +53,7 @@ router.post('/password',(req,res)=>{
         res.json(data);
     })
 });
+
 router.post('/oauth2',(req,res)=>{});
 
 module.exports = router;

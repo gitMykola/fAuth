@@ -8,7 +8,9 @@ let express = require('express'),
     db = monk(config.db.host+':'+config.db.port+'/'+config.db.dbName),
     cryptor = require('crypto'),
     rnd = require('randomstring'),
-    valid = require('../services/validation');
+    md5 = require('js-md5'),
+    valid = require('../services/validation'),
+    net = require('net');
 
 module.exports =
     {
@@ -45,6 +47,16 @@ module.exports =
                 });
             }
         },
+        getUserByParam: function(param,next){
+            let err = 'Invalid Param!';
+            if(!this.validateData(param))next({error:err});
+            else {
+                db.get(this.collectionName).findOne(param,(err,user)=>{
+                    if(err)next({error:'Database error!'});
+                    else next({error:null,data:user});
+                });
+            }
+        },
         getTmpUserByPhone: function(phone,next){
             let err = 'Invalid Phone!';
             if(!this.validateData({phone:phone}))next({error:err});
@@ -63,8 +75,9 @@ module.exports =
             });
         },
         setTempPhoneUser:function(req,res,next){
+            console.dir(req.body);
             res.resData = {r:valid.format(req.body),r1:{k1:null,u1:null}};
-            if(!res.resData.r)next(res.resData);
+            if(res.resData.r)next(res.resData);
             else if(!this.validateData({phone:req.body.pn})) {
                     res.resData.r = 0;
                     next(res.resData);
@@ -90,6 +103,10 @@ module.exports =
                                         let tmpUser = {
                                             name: 'PHONE USER',
                                             phone: req.body.pn,
+                                            userOS:req.body.on,
+                                            userIp:req.body.h1,
+                                            userIMEI:req.body.p3,
+                                            userLang:req.body.ul,
                                             u1:rnd.generate(32),
                                         };
                                         this.setTempUser(tmpUser, (ms) => {
@@ -99,7 +116,7 @@ module.exports =
                                             } else {
                                                 res.resData.r1.k1 = ms.data;
                                                 res.resData.r1.u1 = tmpUser.u1;
-                                                next.json(res.resData);
+                                                next(res.resData);
                                             }
                                         })
                                     }
@@ -112,7 +129,7 @@ module.exports =
         setTempUser: function(data,next){
             if(!this.validateData(data))next({error:'Data invalid'});
             else {
-                data.message = rnd.generate(5);
+                data.message = valid.rndNumber(5);
                 data.created_at = (new Date()).getTime();
                 db.get(this.tempCollection).insert(data,(err,tmpUser)=>{
                     if(err)next({error:'Database error.'});
@@ -179,11 +196,8 @@ module.exports =
 
         },
         sendSmsConfirmation:function(req,res,next){
-            res.resData = {rs:null,rs1:{us1:null}};
-            if(!this.validateData({phone:req.body.pn})) {
-                res.resData.rs = 0;
-                next(res.resData);
-            }
+            res.resData = {rs:valid.format(req.body),rs1:{us1:null}};
+            if(res.resData.rs)next(res.resData);
             else this.getUserByPhone(req.body.ph,(data)=> {
                 if (data.error) {
                     res.resData.rs = 'Serever database error!';
@@ -203,7 +217,7 @@ module.exports =
                             }else if(req.body.ss !== tmpUser.data.message){
                                 res.resData.rs = 3;
                                 next(res.resData);
-                            }else if(req.body.s !== md5(tmpUser.data._id.toString())){
+                            }else if(req.body.s !== md5(tmpUser.data.u1.toString())){
                                 res.resData.rs = 4;
                                 next(res.resData);
                             }else if((Date.now() - tmpUser.data.created_at) > config.app.tmpUserLive){
@@ -213,7 +227,12 @@ module.exports =
                             }else this.setUser({
                                 name:'PHONE USER',
                                 phone:tmpUser.data.phone,
-                                created_at:Date.now(),
+                                created_at:tmpUser.data.created_at,
+                                userOS:tmpUser.data.userOS,
+                                userIp:tmpUser.data.userIp,
+                                userIMEI:tmpUser.data.userIMEI,
+                                userLang:tmpUser.data.userLang,
+                                u1:rnd.generate(32)
                             },(err,staticUser)=>{
                                 if(err){
                                     res.resData.rs = 'Server Database error!!';
@@ -224,7 +243,7 @@ module.exports =
                                             res.resData.rs = 'Server Database error!';
                                             next(res.resData);
                                         }else{
-                                            res.resData.rs1.us1 = staticUser._id.toString();
+                                            res.resData.rs1.us1 = staticUser.u1.toString();
                                             next(res.resData);
                                         }
                                     })
@@ -243,6 +262,15 @@ module.exports =
                     next(err,user);
                 });
             }else res.send({err:'Data invalid!'});
+        },
+        updatePhoneUser: function(id,data,next)
+        {
+            if(this.validateData(data))
+            {
+                db.get(this.collectionName).update({'_id':id},data,function(err,user){
+                    next(err,user);
+                });
+            }else next('Data invalid!',null);
         },
         deleteUser: function(id,res,next)
         {
@@ -275,31 +303,50 @@ module.exports =
         },
         validateData: (data)=>
         {
-            console.log('Data VERIFICATION');
+            console.log('User data VALIDATION');
             console.dir(data);
             for(let ind in data)
             {
-                if(data.hasOwnProperty(ind) && data[ind])
+                if(/*data.hasOwnProperty(ind) && */data[ind])
                 {console.log(ind+' '+data[ind]+' '+data[ind].length);
                     switch(ind)
                     {
                         case 'name':
-                            if(typeof(data[ind]) !== 'string' || data[ind].length < 3 || data[ind].length > 50 || !data[ind].match(/[a-zA-Z0-9@_.]/))
-                                return false;
+                            return (typeof(data[ind]) === 'string' && data[ind].length > 1 && data[ind].length < 51 && data[ind].match(/[a-zA-Z0-9@_.]/));
                             break;
                         case 'email':
-                            if(typeof(data[ind]) !== 'string' || !data[ind].match(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/))
-                                return false;
+                            return (typeof(data[ind]) === 'string' && data[ind].match(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/));
                             break;
                         case 'pwd':
                             //if(!data[ind].match())return false;
+                            return typeof(data[ind] === 'object');
                             break;
                         case 'phone':
-                            if(typeof(data[ind]) !== 'string' || !data[ind].match(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g) || data[ind].length !== 13)
-                                return false;
+                            return (typeof(data[ind]) === 'string' && data[ind].match(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g) && data[ind].length === 13);
                             break;
                         case 'message':
-                            return (typeof(data[ind]) !== 'string' || data[ind].length < 5 && data[ind].length > 0);
+                            return (typeof(data[ind]) === 'string' && data[ind].length === 5);
+                            break;
+                        case '_id':
+                            return (typeof(data[ind] === 'object') && data[ind].toString().length === 24);
+                            break;
+                        case 'created_at':
+                            return (typeof(data[ind]) === 'number' && data[ind].toString().length === 13);
+                            break;
+                        case 'userOS':
+                            return (data[ind] === 0 || data[ind] === 1);
+                            break;
+                        case 'userIp':
+                            return net.isIP(data[ind]);
+                            break;
+                        case 'userIMEI':
+                            return (data[ind].length === 15 && Boolean(Number(data[ind])));
+                            break;
+                        case 'userLang':
+                            return (data[ind].length === 2 && data[ind] === data[ind].toLowerCase());
+                            break;
+                        case 'u1':
+                            return (data[ind].length === 32);
                             break;
                         default:
                             break;

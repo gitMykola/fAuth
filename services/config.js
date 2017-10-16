@@ -15,7 +15,7 @@ module.exports = {
         refreshDB:1000*60*60*24,
         ref30DB:1000*60*5,
         tokenLive:60*60,
-        tmpUserLive:60*5,
+        tmpUserLive:60*30*1000,
     },
     currencies:[
         'BTC',

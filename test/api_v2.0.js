@@ -107,15 +107,26 @@ describe('db test',()=>{
                 done();
             })
         });*/
-        //console.log(md5('59e22584159fe127acf1a8e7'));
-        user.setUser({
+        //console.log(md5('uOOKy1QxlYn717D9MaOkhUrJjQAI3CWQ'));
+        user.getUserByParam({'phone':'+170949506641'},(u)=>{
+            /*db.get('users').remove({'_id':{ }},(err,us)=>{*/
+            //console.dir(er);
+            console.dir(u.data);
+            u.data.pwd = 'pass';
+            user.updatePhoneUser(u.data._id,u.data,(err,us)=> {
+                console.log('ERR - ' + err);
+                console.dir(us);
+                done();
+            });
+        });
+        /*user.setUser({
             name:'PHONE USER',
             phone:'+380949506644',
             created_at:Date.now(),
         },(err,usr)=>{
             console.log(err);
             console.dir(usr);
-        })
+        })*/
         /*
         atoken.setToken({userId:'59dbaad613247c274c33c95b',
                             clientId:'59e0cbc1d5c98a2ee65b1a66',
