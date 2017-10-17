@@ -86,7 +86,9 @@ app.get('/api/userInfo',
 
 
 
-//    app.use('/', index);
+    app.use('/gmail', (req,res)=>{
+        res.render('googleAuth');
+    });
       app.get('/',(req,res)=>{
           res.json({
               'c1':config.app.host + '/api/v3.0/phonevalid',
@@ -125,6 +127,6 @@ app.get('/api/userInfo',
 
 // Starting database & global object data refreshing process
 
-startProcess({ref30DB:config.app.ref30DB});
+//startProcess({ref30DB:config.app.ref30DB});
 
 module.exports = app;

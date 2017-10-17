@@ -6,7 +6,7 @@ let express = require('express'),
     url = require('url'),
     rnd = require('randomstring'),
     router = express.Router(),
-    jwtAuth = require('../services/jwtAuth');
+    Auth = require('../services/jwtAuth');
 /*
 * @body:{
 *           pn: +380931311333
@@ -58,7 +58,7 @@ router.post('/password',(req,res)=>{
 * JWT authorization
 * */
 router.post('/auth',(req,res)=>{
-    jwtAuth(req,res,(auth)=>{
+    Auth.jwtAuthorization(req,res,(auth)=>{
         if(auth.token){
             res.setHeader('WWW-Authenticate',auth.token);
             res.json({rp:null});
@@ -66,6 +66,12 @@ router.post('/auth',(req,res)=>{
 
     })
 });
-router.post('/oauth2',(req,res)=>{});
+router.post('/googletoken',Auth.jwtAuthentication,(req,res)=>{
+    if(req.auth) Auth.googleTokenVerify(req,res,(gauth)=>{
+                    if(gauth) res.json({rg:null});
+                    else res.json({rg:0});
+                });
+    else res.json({rt:0});
+});
 
 module.exports = router;

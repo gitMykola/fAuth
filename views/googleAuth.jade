@@ -1,0 +1,10 @@
+
+
+button(id="sign-in-or-out-button" style="margin-left: 25px") Sign In/Authorize
+button(id="revoke-access-button" style="display: none; margin-left: 25px") Revoke access
+
+div(id="auth-status" style="display: inline; padding-left: 25px")
+
+script( src="/javascripts/gmail.js")
+script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
+script(async, defer, src="https://apis.google.com/js/api.js", onload="this.onload=function(){};handleClientLoad()", onreadystatechange="if (this.readyState === 'complete') this.onload()")
