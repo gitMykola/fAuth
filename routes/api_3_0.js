@@ -86,14 +86,29 @@ router.post('/googletoken',Auth.jwtAuthentication,(req,res)=>{
 *   @body{
 *           to:,    user-reciever
 *           am:,    amount in wie
+*           p001:,  password
 *           }
 *   @cur:   transaction currency   ETH,BTC and etc.
 * */
-router.post('/send/:cur',()=>{});
+router.post('/send/:cur',Auth.jwtAuthentication,(req,res)=>{
+    if(req.auth)
+        switch(req.params.cur){
+            case 'ETH':
+                Accounts.sendEthTx(req,res,hash=>{
+                    res.json({rx:hash});
+                });
+                break;
+            default:
+                res.json({rx:0});
+                break;
+        }
+    else if (!req.texp) res.json({rt:0});
+                    else res.json({rt:1});
+});
 /*
 * Count transactions
 * */
-router.get('/countTx/:cur',()=>{});
+router.get('/countTx/:cur',Auth.jwtAuthentication,()=>{});
 /*
 * Account balance
 * */

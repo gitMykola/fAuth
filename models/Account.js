@@ -349,6 +349,40 @@ module.exports = {
 
         });
     },
+    sendEthTx:function(req,res,next){
+        console.dir(req.user);
+        user.getUserByParam({phone:req.user},data=>{
+            console.dir(data);
+            if(data.err)next(1);                        // Sender error
+            else user.getUserAccounts(data.data._id.toString(),(sender)=>{
+                console.dir(sender);
+                if(sender.error || !sender.data.length)next(2); //Sender account error
+                else if(!user.verifyPassword(req.body.p001,data.data))next(3);  // Sender password error
+                    else user.getUserByParam({phone:req.body.to},dt=>{
+                        if(dt.error)next(4);    //Reciever error
+                        else user.getUserAccounts(dt.data._id.toString(),to=>{
+                            if(to.error || !to.data.length)next(5); //Reciever accounts error
+                            else {
+                                let pers = new Personal(req.web3);
+                                pers.unlockAccount(sender.data[0].address,req.body.p001,1000,(err,result)=>{
+                                    if(err)next(2);
+                                    else req.web3.eth.sendTransaction({
+                                        from:sender.data[0].address,
+                                        to:to.data[0].address,
+                                        value:req.body.am,
+                                    },(err,hash)=>{
+                                        console.dir(err);
+                                        if(err)next(6); //Transaction error
+                                        else next(hash);
+                                        pers.lockAccount(sender.data[0].address,req.body.p001,1000,(err,reslt)=>console.log(err));
+                                    })
+                                })
+                            }
+                        })
+                    })
+            })
+        })
+    },
     confirm:function (web3,data,next) {
         this.googleLogin({},(resp)=>{
               if(resp.error)next(resp);
