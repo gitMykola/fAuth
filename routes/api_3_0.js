@@ -66,6 +66,11 @@ router.post('/auth',(req,res)=>{
 
     })
 });
+
+/**********************************************************
+*                   Restricted area endpoints
+* ********************************************************/
+
 router.post('/googletoken',Auth.jwtAuthentication,(req,res)=>{
     if(req.auth) Auth.googleTokenVerify(req,res,(gauth)=>{
                     if(gauth) res.json({rg:null});
@@ -74,5 +79,24 @@ router.post('/googletoken',Auth.jwtAuthentication,(req,res)=>{
     else if(!req.texp)res.json({rt:0});
                 else res.json({rt:1});
 });
+/*
+* Transactions
+*
+* send
+*   @body{
+*           to:,    user-reciever
+*           am:,    amount in wie
+*           }
+*   @cur:   transaction currency   ETH,BTC and etc.
+* */
+router.post('/send/:cur',()=>{});
+/*
+* Count transactions
+* */
+router.get('/countTx/:cur',()=>{});
+/*
+* Account balance
+* */
+router.get('/balance/:cur',()=>{});
 
 module.exports = router;
