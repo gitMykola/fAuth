@@ -1,5 +1,5 @@
 let user = require('../models/User'),
-    config = require('../services/config'),
+    //config = require('../services/config'),
     jwt  = require('jsonwebtoken'),
     xhr = require('../services/xhr');
 
@@ -20,7 +20,7 @@ module.exports = {
                     {
                         let token = jwt.sign({
                             user:usr.data.phone
-                        },config.app.privateKey,{
+                        },global.config.app.privateKey,{
                             expiresIn:60*60
                         });
                         next({token:token});
@@ -36,9 +36,11 @@ module.exports = {
             req.auth = false;
             next();
         }else{
-            jwt.verify(data,config.app.privateKey,(err,usr)=>{
+            jwt.verify(data,global.config.app.privateKey,(err,usr)=>{
+                req.texp = false;
                 if(err){
                     req.auth = false;
+                    req.texp = true;
                     next();
                 }else{
                     req.auth = true;

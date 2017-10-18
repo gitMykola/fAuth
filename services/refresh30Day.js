@@ -1,14 +1,14 @@
 let monk = require('monk'),
-    config = require('../services/config'),
-    db = monk(config.db.host+':'+config.db.port+'/'+config.db.dbName),
+    //config = require('../services/config'),
+    db = monk(global.config.db.host+':'+global.config.db.port+'/'+global.config.db.dbName),
     market_1 = require('../markets/gdax');
 
 process.on('message', (msg) => {
     console.log('Message from parent:', msg);
     start();
 });
-
-//setInterval(() => start(),config.app.refresh30);
+for(let i = 1;i < global.config.app.refNum;i++)
+    setInterval(() => start(),global.config.app.refresh30 * i);
 
 function start(){
     process.send({start:true});

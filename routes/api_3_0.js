@@ -71,7 +71,8 @@ router.post('/googletoken',Auth.jwtAuthentication,(req,res)=>{
                     if(gauth) res.json({rg:null});
                     else res.json({rg:0});
                 });
-    else res.json({rt:0});
+    else if(!req.texp)res.json({rt:0});
+                else res.json({rt:1});
 });
 
 module.exports = router;

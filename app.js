@@ -28,6 +28,8 @@ let auth = require('./routes/auth'),
 let app = express(),
     startProcess = require('./services/start');
 
+    global.config = config;
+
     store.on('error', function(error) {console.log(error)});
 
 // view engine setup
