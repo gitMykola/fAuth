@@ -28,7 +28,7 @@ let auth = require('./routes/auth'),
 let app = express(),
     startProcess = require('./services/start');
 
-    //global.config = config;
+    global.config = config;
 
     store.on('error', function(error) {console.log(error)});
 
@@ -129,6 +129,6 @@ app.get('/api/userInfo',
 
 // Starting database & global object data refreshing process
 
-startProcess({ref30DB:config.app.ref30DB});
+//startProcess({ref30DB:config.app.ref30DB});
 
 module.exports = app;

@@ -113,5 +113,19 @@ router.get('/countTx/:cur',Auth.jwtAuthentication,()=>{});
 * Account balance
 * */
 router.get('/balance/:cur',()=>{});
+/*
+* Contacts
+*
+* @body{
+*           cs:[c1,c2,...,c50]
+*       }
+* */
+router.post('/contacts',Auth.jwtAuthentication,(req,res)=>{
+    if(req.auth) Accounts.checkContacts(req,res,(cs)=>{
+        res.json(cs);
+    });
+    else if(!req.texp)res.json({rt:0});
+    else res.json({rt:1});
+});
 
 module.exports = router;
