@@ -402,15 +402,15 @@ module.exports = {
       let cs = req.body;
       if(cs && typeof(cs) === 'object') {
           let fn = function (k, cont, nx) {
-              if (k > Object.keys(cont).length) nx(cont);
-              else user.getUserByParam({phone: cont[k]}, (usr) => {
-                  if (usr.data) cont[k] = 1;
-                  else cont[k] = 0;
+              if (k === Object.keys(cont).length) nx(cont);
+              else user.getUserByParam({phone: cont[Object.keys(cont)[k]]}, (usr) => {
+                  if (usr.data) cont[Object.keys(cont)[k]] = 1;
+                  else cont[Object.keys(cont)[k]] = 0;
                   k++;
                   fn(k, cont, nx);
               })
           };
-          fn(1, cs, next);
+          fn(0, cs, next);
       }else next(0);
     },
 };
