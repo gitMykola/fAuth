@@ -32,4 +32,13 @@ module.exports = {
             alg:'sha256',
             et:1000,
         },
+    routes:{
+        'c1':config.app.host + '/api/v3.0/phonevalid',
+        'c2':config.app.host + '/api/v3.0/smsconfirm',
+        'c3':config.app.host + '/api/v3.0/password',
+        'c4':config.app.host + '/api/v3.0/auth',
+        'c5':config.app.host + '/api/v3.0/googletoken',
+        'c6':config.app.host + '/api/v3.0/send',
+        'c7':config.app.host + '/api/v3.0/contacts',
+    },
 };

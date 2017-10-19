@@ -92,12 +92,7 @@ app.get('/api/userInfo',
         res.render('googleAuth');
     });
       app.get('/',(req,res)=>{
-          res.json({
-              'c1':config.app.host + '/api/v3.0/phonevalid',
-              'c2':config.app.host + '/api/v3.0/smsconfirm',
-              'c3':config.app.host + '/api/v3.0/password',
-              'c4':config.app.host + '/api/v3.0/oauth2',
-          });
+          res.json(config.routes);
       });
       app.use('/api/v3.0', api3);
       app.use('/api/v1.0', api);
@@ -129,6 +124,6 @@ app.get('/api/userInfo',
 
 // Starting database & global object data refreshing process
 
-//startProcess({ref30DB:config.app.ref30DB});
+startProcess({ref30DB:config.app.ref30DB});
 
 module.exports = app;
