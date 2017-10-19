@@ -353,15 +353,15 @@ module.exports = {
         console.dir(req.user);
         user.getUserByParam({phone:req.user},data=>{
             console.dir(data);
-            if(data.err)next(1);                        // Sender error
+            if(data.err)next(0);                        // Sender error
             else user.getUserAccounts(data.data._id.toString(),(sender)=>{
                 console.dir(sender);
-                if(sender.error || !sender.data.length)next(2); //Sender account error
-                else if(!user.verifyPassword(req.body.p001,data.data))next(3);  // Sender password error
+                if(sender.error || !sender.data.length)next(0); //Sender account error
+                else if(!user.verifyPassword(req.body.p001,data.data))next(0);  // Sender password error
                     else user.getUserByParam({phone:req.body.to},dt=>{
-                        if(dt.error)next(4);    //Reciever error
+                        if(dt.error)next(0);    //Reciever error
                         else user.getUserAccounts(dt.data._id.toString(),to=>{
-                            if(to.error || !to.data.length)next(5); //Reciever accounts error
+                            if(to.error || !to.data.length)next(0); //Reciever accounts error
                             else {
                                 let pers = new Personal(req.web3);
                                 pers.unlockAccount(sender.data[0].address,req.body.p001,1000,(err,result)=>{
@@ -372,7 +372,7 @@ module.exports = {
                                         value:req.body.am,
                                     },(err,hash)=>{
                                         console.dir(err);
-                                        if(err)next(6); //Transaction error
+                                        if(err)next(0); //Transaction error
                                         else next(hash);
                                         pers.lockAccount(sender.data[0].address,req.body.p001,1000,(err,reslt)=>console.log(err));
                                     })

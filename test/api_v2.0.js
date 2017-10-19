@@ -107,18 +107,18 @@ describe('db test',()=>{
                 done();
             })
         });*/
-        //console.log(md5('uOOKy1QxlYn717D9MaOkhUrJjQAI3CWQ'));
-        user.getUserByParam({'phone':'+170949506641'},(u)=>{
+        console.log(md5('kPtzIomGfFhUAuxKMjHCQGUCuYrMVlRR'));done();
+       // user.getUserByParam({'phone':'+170949506641'},(u)=>{
             /*db.get('users').remove({'_id':{ }},(err,us)=>{*/
             //console.dir(er);
-            console.dir(u.data);
+         /*   console.dir(u.data);
             u.data.pwd = 'pass';
             user.updatePhoneUser(u.data._id,u.data,(err,us)=> {
                 console.log('ERR - ' + err);
                 console.dir(us);
                 done();
             });
-        });
+        });*/
         /*user.setUser({
             name:'PHONE USER',
             phone:'+380949506644',

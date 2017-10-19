@@ -14,7 +14,6 @@ module.exports = {
         refresh30:1000*60*60*24,
         refreshDB:1000*60*60*24,
         ref30DB:1000*60*5,
-        refNum:365*20,
         tokenLive:60*60,
         tmpUserLive:60*30*1000,
     },

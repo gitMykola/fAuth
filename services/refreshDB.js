@@ -1,6 +1,6 @@
 let monk = require('monk'),
-    //config = require('../services/config'),
-    db = monk(global.config.db.host+':'+global.config.db.port+'/'+global.config.db.dbName),
+    config = require('../services/config'),
+    db = monk(config.db.host+':'+config.db.port+'/'+config.db.dbName),
     market_1 = require('../markets/gdax'),
     provider = new require('../providers/RatesProvider');
 
@@ -12,8 +12,13 @@ process.on('message', (msg) => {
 
 let counter = 0;
 
-for(let i = 1;i < global.config.app.refNum;i++)
-  setInterval(() => start(), global.config.app.refreshDB * i);
+let fn = function(){
+        setTimeout(()=>{
+            start();
+            fn();
+        },config.app.refreshDB);
+    };
+fn();
 
 function start(){
     process.send({ counter: counter++ });
