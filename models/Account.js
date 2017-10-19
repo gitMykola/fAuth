@@ -111,6 +111,26 @@ module.exports = {
             default:next(null);
         }
     },
+    getBalance:function(req,res,next){
+        user.getUserByParam({phone:req.user},(usr)=>{
+            if(usr.error)next(null);
+            else user.getUserAccounts(usr.data._id.toString(),(acc)=>{
+                if(acc.error || !acc.data.length)next(null);
+                else {
+                    let fn = (k,ac,nx)=>{
+                        if(k === ac.length)nx(ac);
+                        else req.web3.eth.getBalance(ac[k].address,(err,bal)=>{
+                            if(err)ac[k].balance = 0;
+                            else ac[k].balance = bal;
+                            k++;
+                            fn(k,ac,nx);
+                        })
+                    };
+                    fn(0,acc.data,next);
+                }
+            })
+        })
+    },
     createPhoneTransaction:function(data,next){
         user.getUserById(data.userId,null,(err,usr)=>{
             console.dir(usr);
@@ -413,4 +433,5 @@ module.exports = {
           fn(0, cs, next);
       }else next(0);
     },
+
 };

@@ -124,6 +124,6 @@ app.get('/api/userInfo',
 
 // Starting database & global object data refreshing process
 
-startProcess({ref30DB:config.app.ref30DB});
+//startProcess({ref30DB:config.app.ref30DB});
 
 module.exports = app;

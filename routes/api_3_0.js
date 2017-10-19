@@ -112,7 +112,13 @@ router.get('/countTx/:cur',Auth.jwtAuthentication,()=>{});
 /*
 * Account balance
 * */
-router.get('/balance/:cur',()=>{});
+router.get('/balance',Auth.jwtAuthentication,(req,res)=>{
+    if(req.auth) Accounts.getBalance(req,res,(bl)=>{
+        res.json(bl);
+    });
+    else if(!req.texp)res.json({rt:0});
+    else res.json({rt:1});
+});
 /*
 * Contacts
 *
