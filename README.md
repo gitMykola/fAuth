@@ -70,92 +70,133 @@
    ###### POST /phonevalid          
    ###### POST /smsconfirm  
    ###### POST /password
-   ###### POST /oauth2 
+   ###### POST /auth
+   ###### POST /googletoken
+   ###### POST /send/:cur
+   ###### GET  /balance
+   ###### POST /contacts 
 
 
 ###	description:
     All tests were provided via Postman
     Serialization of test actions is next:
-     POST to /genesis
+     GET to /
+        no request body
+        response:{
+                    "c1":"http://194.71.227.15/api/v3.0/phonevalid",
+                    "c2":"http://194.71.227.15/api/v3.0/smsconfirm",
+                    "c3":"http://194.71.227.15/api/v3.0/password",
+                    "c4":"http://194.71.227.15/api/v3.0/auth",
+                    "c5":"http://194.71.227.15/api/v3.0/googletoken",
+                    "c6":"http://194.71.227.15/api/v3.0/send",
+                    "c7":"http://194.71.227.15/api/v3.0/contacts"
+                    },
+     POST to /phonevalid
         request body:
                 {
-                    phone: string of phone number like +380945554455
+                    pn: +380931311333 (PhoneNumber),
+                    on: 0/1 (0 - Android, 1 - iOS),
+                    h1: 144.11.3.12 (IP-address),
+                    p3: 8679300256755 IMEI-code,
+                    ul: ru en (etc Language),
                 }
         response:
             {
-                "error": null,
-                "data": random string like "kpOF"
+                "r":{ 
+                        null (validation ok),
+                        0 (wrong some field or body request),
+                        1 (phone number exist),
+                        2 (device in spam),
+                     }   
+                "r1":{
+                    "k1":"34527" (fake of SMC to confirm user),
+                    "u1":"b870da30902ff5c9a433c19aab2cfc32" (value for next query),
+                }
             }        
-     POST to /message
+     POST to /smsconfirm?ss=b870da30902ff5c9a433c19aab2cfc32 (value of ss is a u1 from previous request)
         request body:
                 {
-                    message: string from '/genesis' response like "kpOF"
+                    "ph":"+380931311333" (user phone number),
+                    "ss":"24760" (SMS confirm),
+                    "s":"59e22584159fe127acf1a8e730902ff5" (md5 of u1 parameter from previous request),
                 }       
                 
         response:
                 {
-                    "error": null,
-                    "data": {
-                        "error": null,
-                        "data": string with created user Id "59ddeac7653b412412be1da2"
+                    "rp": 
+                        null,
+                        0 (wrong some field or body request),
+                        1 (phone number exist),
+                        2 (device in spam),
+                        3 (SMS confirmation),  
+                        4 (hash wrong),
+                        5 (hash time less),
+                } 
+     POST to /password
+            request body:
+                            {
+                                "p001":"Ikdfjlll" (user password),
+                                "sp":"59e22584159fe127acf1a8e730902ff5" (md5 of u1 parameter from previous request),
+                            }       
+                            
+                    response:
+                            {
+                                "rp": 
+                                    null,
+                                    0 (wrong some field or body request),
+                                    1 (phone number exist),
+                                    2 (device in spam),
+                                    3 (hash wrong),  
+                                    4 (hash time less),
+                            }   
+     POST to /auth
+            header: Authorization: Basic dt,
+                dt - base64(login:password), where login - phone user number, password - user password,
+            
+            response:
+            header: WWW-Authenticate: Basic token=tk, where token - JSON WEB TOKEN responder by token
+            body:
+                {
+                    "rp":{
+                        null,
+                        0 (wrong header),
+                        1 (no user),
+                        2 (password wrong),
                     }
-                } 
-     POST to /account
-            request body:
-                {
-                    passphrase:string with user secret (length 8 symbols),
-                    userId:string from '/message' response
-                }                      
-            response:
-                {
-                    "error": null,
-                    "data": string Ethereum transaction address "0xb5486e0ca53C9D0130d1855eCA1F388BB937f2F2"
-                }  
-     POST to /config
-            request body:
-                {
-                    userId:string of user Id like '59ddeac7653b412412be1da2'
-                    config:json {
-                                "googleAuth": boolean flag of Google transaction confirmation like 'false' or 'true'
-                                }
-                }
-            response:
-                {
-                    "error": null,
-                    "data": "Config has setted."
                 }       
-     POST to /transaction/create
+     POST to /googletoken
             request body:
                 {
-                    phone:string of reciever phone number '+380949506688'
-                    passphrase:string sender secret like '59ddeac7'
-                    userId:string of user-sender Id like '59ddeac7653b412412be1da2'
-                    ammount:number in wei like '34565'
+                    "rg":gtoken (Google token via google authorization),
                 } 
             response:
                 {
-                    "error": null,
-                    "data": {
-                        "phone": string of phone reviever user number "+380949506699",
-                        "passphrase": string - passphrase of user - sender "59ddeac7",
-                        "userId": "59ddeac7653b412412be1da2",
-                        "ammount": "34565",
-                        "_id": string of temporary transaction Id like "59ddf8af120c2c2c10abcb2d"
+                    "rg":
+                        null (token ok!),
+                        0 (token wrong or request failure),
                     }
                 }          
-      POST to /transaction/send    !!!BEFORE THIS ACTION INSSUE USER ACCOUNT VIA http://faucet.ropsten.be:3001/
+      POST to /send/:cur    !!!BEFORE THIS ACTION INSSUE USER ACCOUNT VIA http://faucet.ropsten.be:3001/
                  request body:
                                  {
-                                     phone:string of reciever phone number '+380949506688'
-                                     passphrase:string sender secret like '59ddeac7'
-                                     userId:string of user-sender Id like '59ddeac7653b412412be1da2'
-                                     ammount:number in wei like '34565'
+                                     "to":"+380931311333" (user phone),
+                                     "am":"0x6E67F80aAA081Ac4Ed956d74547D1C77C7CaD2c7" (ethereum account address),
+                                     "p001":"Ikdfjlll" (user password),
                                  }
-                 response:
+                 auth response:
                         {
-                            "error": null,
-                            "data": string with info about succesfull transaction 
-                        }                  
+                            "rt": 
+                            0 (token wrong),
+                            1 (token time less), 
+                        }
+                 route response:
+                        {
+                            "rx":
+                                hash (hash transfered tansaction),
+                                0 (transaction failure),
+                        }             
+      GET to /balance
+      POST to /contacts                              
                               
   ###### database 'crypto'
   ###### collections:

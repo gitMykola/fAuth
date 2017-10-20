@@ -35,6 +35,7 @@ let app = express(),
 // view engine setup
     app.set('views', path.join(__dirname, 'views'));
     app.set('view engine', 'jade');
+
     app.use(session({
         store:store,
         cookie:{maxAge: config.app.cookieLife},
@@ -65,7 +66,7 @@ app.use(function(req,res,next){
     });
 
 
-
+/*
 let oauth2          = require('./services/oauth2'),
     passport            = require('passport');
 
@@ -90,7 +91,7 @@ app.get('/api/userInfo',
 
     app.use('/gmail', (req,res)=>{
         res.render('googleAuth');
-    });
+    });*/
       app.get('/',(req,res)=>{
           res.json(config.routes);
       });
@@ -118,12 +119,12 @@ app.get('/api/userInfo',
 
       // render the error page
       res.status(err.status || 500);
-      console.dir(err);
+      //console.dir(err);
       res.json({error:'error'});
     });
 
 // Starting database & global object data refreshing process
 
-//startProcess({ref30DB:config.app.ref30DB});
+startProcess({ref30DB:config.app.ref30DB});
 
 module.exports = app;
