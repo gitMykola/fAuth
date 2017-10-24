@@ -165,6 +165,7 @@
                     }
                 }       
      POST to /googletoken
+            header: WWW-Authenticate: Basic token=tk, where token - JSON WEB TOKEN responder by token
             request body:
                 {
                     "rg":gtoken (Google token via google authorization),
@@ -177,7 +178,9 @@
                     }
                 }          
       POST to /send/:cur    !!!BEFORE THIS ACTION INSSUE USER ACCOUNT VIA http://faucet.ropsten.be:3001/
-                 request body:
+                 request 
+                 header: WWW-Authenticate: Basic token=tk, where token - JSON WEB TOKEN responder by token
+                 body:
                                  {
                                      "to":"+380931311333" (user phone),
                                      "am":"0x6E67F80aAA081Ac4Ed956d74547D1C77C7CaD2c7" (ethereum account address),
@@ -196,7 +199,76 @@
                                 0 (transaction failure),
                         }             
       GET to /balance
-      POST to /contacts                              
+                 request 
+                 header: WWW-Authenticate: Basic token=tk, where token - JSON WEB TOKEN responder by token
+                 
+                 auth response:
+                                         {
+                                             "rt": 
+                                             0 (token wrong),
+                                             1 (token time less), 
+                                         }
+                 route response:
+                        {
+                                "currency": "ETH",
+                                "address": "0x4336121081a46Fd8b4de28BB02aE5b6fDca0168E",
+                                "balance": "1417535234970499667" (in wei)
+                            }                        
+      POST to /contacts 
+                request
+                header: WWW-Authenticate: Basic token=tk, where token - JSON WEB TOKEN responder by token
+                body:
+                            {
+                                "1":"+170949506641",
+                                "2":"+380949506666",
+                                "3":"+391200000045",
+                                "45":"+380949506642"
+                                }
+                auth response:
+                                  {
+                                    "rt": 
+                                    0 (token wrong),
+                                    1 (token time less), 
+                                  }
+                route response:
+                        {
+                            "1": 1,
+                            "2": 1,
+                            "3": 0,
+                            "45": 1
+                        }                  
+                                                                         
+      GET to /transactionsjournal  
+                        request 
+                        header: WWW-Authenticate: Basic token=tk, where token - JSON WEB TOKEN responder by token
+                                         
+                         auth response:
+                         {
+                             "rt": 
+                              0 (token wrong),
+                              1 (token time less), 
+                            }
+                         route response:
+                            [
+                                {
+                                    "timestamp": 1508854804352,
+                                    "from": "0x4336121081a46Fd8b4de28BB02aE5b6fDca0168E",
+                                    "to": "0x56cb9adff6b442697b2eb912a73a618a5b3bea8a",
+                                    "ammount": "3110440005600111"
+                                },
+                                {
+                                    "timestamp": 1508854794624,
+                                    "from": "0x4336121081a46Fd8b4de28BB02aE5b6fDca0168E",
+                                    "to": "0x56cb9adff6b442697b2eb912a73a618a5b3bea8a",
+                                    "ammount": "3200440005600111"
+                                },
+                                {
+                                    "timestamp": 1508854768232,
+                                    "from": "0x4336121081a46Fd8b4de28BB02aE5b6fDca0168E",
+                                    "to": "0x56cb9adff6b442697b2eb912a73a618a5b3bea8a",
+                                    "ammount": "5000440005600111"
+                                }
+                            ]                        
                               
   ###### database 'crypto'
   ###### collections:

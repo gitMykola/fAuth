@@ -126,7 +126,7 @@ module.exports =
                     }
                 })
         },
-        setTempUser: function(data,next){
+        setTempUser: function(data,next)    {
             if(!this.validateData(data))next({error:'Data invalid'});
             else {
                 data.message = valid.rndNumber(5);

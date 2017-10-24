@@ -141,7 +141,10 @@ module.exports = {
                 sort:{created_at:-1}},(err,tx)=>{
                 console.dir(tx);
                     if(err) next({error:'TX error!'});
-                    else next({error:null, tx:tx});
+                    else next({error:null, tx:tx.map((t)=>{return {timestamp:t.created_at,
+                                                                    from:t.from,
+                                                                    to:t.to,
+                                                                    ammount:t.value}})});
             })
         })
     },
