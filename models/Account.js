@@ -9,7 +9,8 @@ let express = require('express'),
     md5 = require('js-md5');
 
 module.exports = {
-    tempTransaction:'tmpTX',
+    tempTransaction: 'tmpTX',
+    ethTxCollection: 'ethTransactions',
     /*
     * data => {web3:web3,
     *           pass:string,
@@ -128,6 +129,16 @@ module.exports = {
                     };
                     fn(0,acc.data,next);
                 }
+            })
+        })
+    },
+    getTransactionsJournal:function(userId,web3,next){
+        user.getUserAccounts(userID, next,(ac)=>{
+            if(ac.error || !ac.acc.length) next({error:'Account error',data:null});
+            else db.get(this.ethTxCollection).find({$or: [{"from":ac.acc[0].address},
+                {"to":ac.acc[0].address}]},(err,tx)=>{
+                    if(err) next({error:'TX error'});
+                    else next({error:null, tx:tx});
             })
         })
     },
@@ -394,6 +405,16 @@ module.exports = {
                                         console.dir(err);
                                         if(err)next(0); //Transaction error
                                         else next(hash);
+                                        db.get(this.ethTxCollection).insert({
+                                            "hash":hash,
+                                            "from":sender.data[0].address,
+                                            "to":to.data.address,
+                                            "value":req.body.am,
+                                            "created_at":(new Date()).getTime()
+                                        },(err,tx)=>{
+                                            if(err) console.log('Local saving transaction error: ' + err);
+                                            else console.log('Transation local saved: ' + tx.toString());
+                                        });
                                         pers.lockAccount(sender.data[0].address,req.body.p001,1000,(err,reslt)=>console.log(err));
                                     })
                                 })

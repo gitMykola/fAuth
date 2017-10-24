@@ -4,7 +4,7 @@ module.exports = function (data){
     const refDB = fork('./services/refreshDB');//Don't forget set FULL PATH on PRODACTION!!!
 
     refDB.on('message', (msg) => {
-        console.log('Message from child DB ', msg.counter);
+        console.log('Message from child DB '+ msg.counter);
         global.data = msg.counter;
     });
 

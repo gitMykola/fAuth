@@ -108,7 +108,17 @@ router.post('/send/:cur',Auth.jwtAuthentication,(req,res)=>{
 /*
 * Count transactions
 * */
-router.get('/countTx/:cur',Auth.jwtAuthentication,()=>{});
+router.get('/transactionsjournal/:cur',Auth.jwtAuthentication,(req,res)=>{
+    if(req.auth) User.getUserByParam(req.user,(usr)=>{
+        if(usr.error)res.json({tr:0});
+        else Accounts.getTransactionsJournal(usr.data._id.toString(),req.web3,(err,tx)=>{
+            if(err)res.json({tr:0});
+            else res.json(tx);
+        })
+    });
+    else if(!req.texp)res.json({rt:0});
+    else res.json({rt:1});
+});
 /*
 * Account balance
 * */

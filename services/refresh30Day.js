@@ -22,7 +22,7 @@ function start(){
     let pair = 'BTC-USD';
     collection.find({pair:pair},{time:{$gte:0},
                         close:{$gte:0},
-                        sort:{time:-1},
+                        sort:{time:1},
                         limit:30})
         .then((result)=>{
             let data = result.map((days)=>{
@@ -63,7 +63,7 @@ function start(){
     let pair2 = 'ETH-USD';
     collection.find({pair:pair2},{time:{$gte:0},
         close:{$gte:0},
-        sort:{time:-1},
+        sort:{time:1},
         limit:30})
         .then((result)=>{
             let data = result.map((days)=>{
