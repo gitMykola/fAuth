@@ -1,4 +1,4 @@
-# Crypto currencies api 2.0
+# Crypto currencies api
 #
 ####   Dependencies:
 
@@ -71,10 +71,11 @@
    ###### POST /smsconfirm  
    ###### POST /password
    ###### POST /auth
-   ###### POST /googletoken
-   ###### POST /send/:cur
-   ###### GET  /balance
-   ###### POST /contacts 
+   ####### POST /googletoken
+   ####### POST /send/:cur
+   ####### GET  /balance
+   ####### POST /contacts 
+   ####### GET  /transactionsjournal
 
 
 ###	description:
@@ -89,7 +90,9 @@
                     "c4":"http://194.71.227.15/api/v3.0/auth",
                     "c5":"http://194.71.227.15/api/v3.0/googletoken",
                     "c6":"http://194.71.227.15/api/v3.0/send",
-                    "c7":"http://194.71.227.15/api/v3.0/contacts"
+                    "c7":"http://194.71.227.15/api/v3.0/contacts",
+                    "c8":"http://194.71.227.15/api/v3.0/balance",
+                    "c9":"http://194.71.227.15/api/v3.0/transactionsjournal"
                     },
      POST to /phonevalid
         request body:

@@ -1,10 +1,6 @@
 module.exports = {
     db:{
-        host:'localhost',
-        port:'27017',
-        dbName:'crypto',
-        user:'root',
-        pwd:'',
+        url:'localhost:27017/crypto'
     },
     app:{
         host:'http://localhost:3000',
@@ -41,5 +37,6 @@ module.exports = {
         'c6':'http://194.71.227.15/api/v3.0/send',
         'c7':'http://194.71.227.15/api/v3.0/contacts',
         'c8':'http://194.71.227.15/api/v3.0/balance',
+        'c9':'http://194.71.227.15/api/v3.0/transactionsjournal'
     },
 };

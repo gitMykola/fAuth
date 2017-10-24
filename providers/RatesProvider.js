@@ -1,7 +1,7 @@
 let XHR = require('xmlhttprequest').XMLHttpRequest,
     monk = require('monk'),
     config = require('../services/config'),
-    db = monk(config.db.host+':'+config.db.port+'/'+config.db.dbName),
+    db = monk(config.db.url),
     market_1 = require('../markets/gdax');
 
 module.exports = class RatesProvider{

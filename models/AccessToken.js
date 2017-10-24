@@ -1,6 +1,6 @@
 let monk = require('monk'),
     config = require('../services/config'),
-    db = monk(config.db.host+':'+config.db.port+'/'+config.db.dbName),
+    db = monk(config.db.url),
     cryptor = require('crypto'),
     rnd = require('randomstring');
 

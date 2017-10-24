@@ -1,32 +1,30 @@
 let express = require('express'),
     path = require('path'),
-    config = require('./services/config'),
+    config = require(__dirname + '/services/config'),
     favicon = require('serve-favicon'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser');
 
-let auth = require('./routes/auth'),
-    index = require('./routes/index'),
-    users = require('./routes/user'),
+let auth = require(__dirname + '/routes/auth'),
+    index = require(__dirname + '/routes/index'),
+    users = require(__dirname + '/routes/user'),
     session = require('express-session'),
     mongoStore = require('connect-mongodb-session')(session),
     connectionString = 'mongodb://' //+ config.db.user + ':'
                                     //+ config.db.pwd + '@'
-                                    + config.db.host + ':'
-                                    + config.db.port + '/'
-                                    + config.db.dbName,
+                                    + config.db.url,
     store = new mongoStore({
         uri: connectionString,
         collection: 'sessions'
     }),
     Web3 = require('web3'),
-    api = require('./routes/api_1_0'),
-    api2 = require('./routes/api_2_0'),
-    api3 = require('./routes/api_3_0');
+    api = require(__dirname + '/routes/api_1_0'),
+    api2 = require(__dirname + '/routes/api_2_0'),
+    api3 = require(__dirname + '/routes/api_3_0');
 
 let app = express(),
-    startProcess = require('./services/start');
+    startProcess = require(__dirname + '/services/start');
 
     global.config = config;
 
@@ -125,6 +123,6 @@ app.get('/api/userInfo',
 
 // Starting database & global object data refreshing process
 
-// startProcess({ref30DB:config.app.ref30DB});
+ startProcess({ref30DB:config.app.ref30DB});
 
 module.exports = app;
