@@ -133,11 +133,14 @@ module.exports = {
         })
     },
     getTransactionsJournal:function(userId,web3,next){
-        user.getUserAccounts(userID, next,(ac)=>{
-            if(ac.error || !ac.acc.length) next({error:'Account error',data:null});
-            else db.get(this.ethTxCollection).find({$or: [{"from":ac.acc[0].address},
-                {"to":ac.acc[0].address}]},(err,tx)=>{
-                    if(err) next({error:'TX error'});
+        user.getUserAccounts(userId, (ac)=>{
+            console.dir(ac);
+            if(ac.error || !ac.data.length) next({error:'Account error',data:null});
+            else db.get(this.ethTxCollection).find({},{$or: [{"from":ac.data[0].address},
+                {"to":ac.data[0].address}],
+                sort:{created_at:-1}},(err,tx)=>{
+                console.dir(tx);
+                    if(err) next({error:'TX error!'});
                     else next({error:null, tx:tx});
             })
         })
@@ -408,7 +411,7 @@ module.exports = {
                                         db.get(this.ethTxCollection).insert({
                                             "hash":hash,
                                             "from":sender.data[0].address,
-                                            "to":to.data.address,
+                                            "to":to.data[0].address,
                                             "value":req.body.am,
                                             "created_at":(new Date()).getTime()
                                         },(err,tx)=>{

@@ -51,7 +51,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(function(req,res,next){
+app.use(function(req,res,next){//console.dir(req);
     if (typeof req.web3 !== 'undefined') {
         req.web3 = new Web3(web3.currentProvider);
     } else {

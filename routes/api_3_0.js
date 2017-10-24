@@ -108,12 +108,12 @@ router.post('/send/:cur',Auth.jwtAuthentication,(req,res)=>{
 /*
 * Count transactions
 * */
-router.get('/transactionsjournal/:cur',Auth.jwtAuthentication,(req,res)=>{
-    if(req.auth) User.getUserByParam(req.user,(usr)=>{
+router.get('/transactionsjournal',Auth.jwtAuthentication,(req,res)=>{
+    if(req.auth) User.getUserByParam({"phone":req.user},(usr)=>{console.log('ID '+usr.data._id.toString());
         if(usr.error)res.json({tr:0});
-        else Accounts.getTransactionsJournal(usr.data._id.toString(),req.web3,(err,tx)=>{
-            if(err)res.json({tr:0});
-            else res.json(tx);
+        else Accounts.getTransactionsJournal(usr.data._id.toString(),req.web3,(tx)=>{
+            if(tx.erorr)res.json({tr:0});
+            else res.json(tx.tx);
         })
     });
     else if(!req.texp)res.json({rt:0});
