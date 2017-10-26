@@ -158,8 +158,8 @@ router.post('/cryptoinit',Auth.jwtAuthentication,(req,res)=>{
                 else res.json({rt:1});
 });
 
-router.post('/encrypt',Auth.jwtAuthentication,(req,res)=>{
-    if(req.auth) Auth.encrypt(req,res,(ec)=>{
+router.post('/encryptDA',Auth.jwtAuthentication,(req,res)=>{
+    if(req.auth) Auth.decryptUserData(req,res,(ec)=>{
         res.json(ec);
     });
     else if(!req.texp)res.json({rt:0});

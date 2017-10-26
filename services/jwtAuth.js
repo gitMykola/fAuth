@@ -1,5 +1,5 @@
 let user = require('../models/User'),
-    config = require('crypto'),
+    cryp = require('crypto'),
     jwt  = require('jsonwebtoken'),
     xhr = require('../services/xhr'),
     pair = require('keypair'),
@@ -91,21 +91,25 @@ module.exports = {
         })
     },
 
-    encrypt:function(req,res,next){
-        if(!req.body || !req.body.en)next({ec:1});
+    decryptUserData:function(req,res,next){
+        if(!req.body || !req.body.dt || !req.body.vr) next({ec:1});
         else {
-            console.dir(req.body.en);
             user.getUserByParam({'phone':req.user},usr=>{
                 if(usr.error)next({ec:0});
                 else {
-                    let reqData = cbroserify.privateDecrypt(usr.data.serverRSAKeys.private,
-                        Buffer.from(req.body.en));
-                    console.log(Buffer.from(reqData).toString());
-                    next({ec:'OK'});
+                    const key = usr.data.userAESkey;
+                   const decipher = cryp.createDecipheriv('aes-256-cbc',
+                        key,
+                        Buffer.from(req.body.vr));
+                    let dcd = decipher.update(req.body.dt, 'hex', 'utf8');
+                    dcd += decipher.final('utf8');
+                    console.dir(dcd);
+                    next({ec:dcd});
                 }
             })
         }
     },
+
     receiveAS:function(req,res,next){
         if(!req.body || !req.body.ae)next({ac:1});
         else {
@@ -128,5 +132,7 @@ module.exports = {
             })
         }
     }
+
+
 
 };
