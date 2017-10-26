@@ -31,12 +31,14 @@ module.exports = {
 },
     jwtAuthentication:function(req,res,next){
         let data = req.headers['x-access-token'];
+        console.dir(!data);
         if(!data){
             console.log('No Authentication header!');
             req.auth = false;
             next();
         }else{
             jwt.verify(data,global.config.app.privateKey,(err,usr)=>{
+                console.dir(usr);
                 req.texp = false;
                 if(err){
                     req.auth = false;
@@ -45,6 +47,7 @@ module.exports = {
                 }else{
                     req.auth = true;
                     req.user = usr.user;
+                    console.dir(usr.user);
                     next();
                 }
             });
@@ -63,6 +66,26 @@ module.exports = {
                     else next(true);                //May be email validation !?!?!?
                 },reject=>{next(false)});
         }
+    },
+
+    cryptoRSAInit:function(req,res,next){
+        console.dir(req.body);
+        if(!req.body || !req.body.as)next({ac:1});
+        else user.getUserByParam({'phone':req.user},usr=>{
+            if(usr.error)next({ac:2});
+            else {
+                usr.data.publicKey = req.body.as;
+                user.updatePhoneUser(usr.data._id,usr.data,(err,user)=>{
+                    console.log(req.user + ' ' + usr.data.phone);
+                    if(err)next({ac:3});
+                    else {
+                        res.setHeader('access-control-expose-headers', 'res-spk');
+                        res.setHeader('res-spk','server public RSA key');
+                        next({ac:null});
+                    }
+                })
+            }
+        })
     }
 
 };

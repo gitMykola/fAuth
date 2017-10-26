@@ -60,6 +60,7 @@ router.post('/password',(req,res)=>{
 router.post('/auth',(req,res)=>{
     Auth.jwtAuthorization(req,res,(auth)=>{
         if(auth.token){
+            res.setHeader('access-control-expose-headers', 'WWW-Authenticate');
             res.setHeader('WWW-Authenticate',auth.token);
             res.json({rp:null});
         }else res.json({rp:auth.auth});
@@ -142,6 +143,20 @@ router.post('/contacts',Auth.jwtAuthentication,(req,res)=>{
     });
     else if(!req.texp)res.json({rt:0});
     else res.json({rt:1});
+});
+
+
+/*******************************************************************************
+*                       encrypt/decrypt
+ * *******************************************************************************
+* */
+router.post('/cryptoinit',Auth.jwtAuthentication,(req,res)=>{
+    console.dir(req.auth);
+    if(req.auth) Auth.cryptoRSAInit(req,res,(ac)=>{
+        res.json(ac);
+        });
+    else if(!req.texp)res.json({rt:0});
+                else res.json({rt:1});
 });
 
 module.exports = router;

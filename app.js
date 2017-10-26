@@ -4,6 +4,7 @@ let express = require('express'),
     favicon = require('serve-favicon'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
+    cors = require('cors'),
     bodyParser = require('body-parser');
 
 let auth = require(__dirname + '/routes/auth'),
@@ -49,7 +50,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(function(req,res,next){//console.dir(req);
+app.use(cors());
+
+app.use(function(req,res,next){console.dir(req.headers);
     if (typeof req.web3 !== 'undefined') {
         req.web3 = new Web3(web3.currentProvider);
     } else {
@@ -61,6 +64,7 @@ app.use(function(req,res,next){//console.dir(req);
     else
         console.log("connected");
     next();
+
     });
 
 
@@ -123,6 +127,6 @@ app.get('/api/userInfo',
 
 // Starting database & global object data refreshing process
 
- startProcess({ref30DB:config.app.ref30DB});
+// startProcess({ref30DB:config.app.ref30DB});
 
 module.exports = app;
