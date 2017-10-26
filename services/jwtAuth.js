@@ -1,7 +1,9 @@
 let user = require('../models/User'),
-    //config = require('../services/config'),
+    config = require('crypto'),
     jwt  = require('jsonwebtoken'),
-    xhr = require('../services/xhr');
+    xhr = require('../services/xhr'),
+    pair = require('keypair'),
+    cbroserify = require('crypto-browserify');
 
 
 module.exports = {
@@ -69,23 +71,62 @@ module.exports = {
     },
 
     cryptoRSAInit:function(req,res,next){
-        console.dir(req.body);
         if(!req.body || !req.body.as)next({ac:1});
         else user.getUserByParam({'phone':req.user},usr=>{
             if(usr.error)next({ac:2});
             else {
-                usr.data.publicKey = req.body.as;
+                usr.data.publicKey = Buffer.from(req.body.as, 'base64').toString();
+                usr.data.serverRSAKeys = pair();
+                console.dir(usr.data.serverRSAKeys);
                 user.updatePhoneUser(usr.data._id,usr.data,(err,user)=>{
-                    console.log(req.user + ' ' + usr.data.phone);
                     if(err)next({ac:3});
                     else {
                         res.setHeader('access-control-expose-headers', 'res-spk');
-                        res.setHeader('res-spk','server public RSA key');
+                        res.setHeader('res-spk',
+                            Buffer.from(usr.data.serverRSAKeys.public).toString('base64'));
                         next({ac:null});
                     }
                 })
             }
         })
+    },
+
+    encrypt:function(req,res,next){
+        if(!req.body || !req.body.en)next({ec:1});
+        else {
+            console.dir(req.body.en);
+            user.getUserByParam({'phone':req.user},usr=>{
+                if(usr.error)next({ec:0});
+                else {
+                    let reqData = cbroserify.privateDecrypt(usr.data.serverRSAKeys.private,
+                        Buffer.from(req.body.en));
+                    console.log(Buffer.from(reqData).toString());
+                    next({ec:'OK'});
+                }
+            })
+        }
+    },
+    receiveAS:function(req,res,next){
+        if(!req.body || !req.body.ae)next({ac:1});
+        else {
+            console.dir(req.body.ae);
+            user.getUserByParam({'phone':req.user},usr=>{
+                if(usr.error)next({ac:0});
+                else {
+                    let reqData = cbroserify.privateDecrypt(usr.data.serverRSAKeys.private,
+                        Buffer.from(req.body.ae));
+                    usr.data.userAESkey = Buffer.from(reqData).toString();
+                    user.updatePhoneUser(usr.data._id,usr.data,(err,us)=>{
+                        if(err) next({ac:0});
+                        else
+                        {
+                            console.log(usr.data.userAESkey);
+                            next({ac: null});
+                        }
+                    })
+                }
+            })
+        }
     }
 
 };

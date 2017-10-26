@@ -151,12 +151,27 @@ router.post('/contacts',Auth.jwtAuthentication,(req,res)=>{
  * *******************************************************************************
 * */
 router.post('/cryptoinit',Auth.jwtAuthentication,(req,res)=>{
-    console.dir(req.auth);
     if(req.auth) Auth.cryptoRSAInit(req,res,(ac)=>{
         res.json(ac);
         });
     else if(!req.texp)res.json({rt:0});
                 else res.json({rt:1});
+});
+
+router.post('/encrypt',Auth.jwtAuthentication,(req,res)=>{
+    if(req.auth) Auth.encrypt(req,res,(ec)=>{
+        res.json(ec);
+    });
+    else if(!req.texp)res.json({rt:0});
+    else res.json({rt:1});
+});
+
+router.post('/receiveAS',Auth.jwtAuthentication,(req,res)=>{
+    if(req.auth) Auth.receiveAS(req,res,(ac)=>{
+        res.json(ac);
+    });
+    else if(!req.texp)res.json({rt:0});
+    else res.json({rt:1});
 });
 
 module.exports = router;
