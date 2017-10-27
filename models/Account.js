@@ -119,7 +119,12 @@ module.exports = {
                 if(acc.error || !acc.data.length)next(null);
                 else {
                     let fn = (k,ac,nx)=>{
-                        if(k === ac.length)nx(ac);
+                        if(k === ac.length)nx(ac.map((a) => {
+                                                    return {
+                                                        cu: a.currency,
+                                                        ad: a.address,
+                                                        ba: a.balance
+                                                    }}));
                         else req.web3.eth.getBalance(ac[k].address,(err,bal)=>{
                             if(err)ac[k].balance = 0;
                             else ac[k].balance = bal;
@@ -136,12 +141,10 @@ module.exports = {
         user.getUserAccounts(userId, (ac)=>{
             console.dir(ac);
             if(ac.error || !ac.data.length) next({error:'Account error',data:null});
-            else db.get(this.ethTxCollection).find({},{"from":ac.data[0].address,
+            else db.get(this.ethTxCollection).find({"from":ac.data[0].address},{
                 sort:{created_at:-1}},(err,tx)=>{
-                //console.dir(tx);
                     if(err) next({error:'TX error!'});
-                    else
-                        db.get(this.ethTxCollection).find({},{"to":ac.data[0].address,
+                    else db.get(this.ethTxCollection).find({"to":ac.data[0].address},{
                             sort:{created_at:-1}},(err,tt)=> {
                             if (err) next({error: 'TX error!'});
                             else next({
@@ -154,7 +157,7 @@ module.exports = {
                                 }),tt: tt.map((t) => {
                                     return {
                                         timestamp: t.created_at,
-                                        to: t.to,
+                                        from: t.from,
                                         ammount: t.value
                                     }
                                 })

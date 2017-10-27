@@ -2,7 +2,7 @@ let request = require('supertest'),
     expect = require('chai').expect,
     monk = require('monk'),
     config = require('../services/config'),
-    db = monk(config.db.host+':'+config.db.port+'/'+config.db.dbName),
+    db = monk(config.db.url),
     user = require('../models/User'),
     client = require('../models/Client'),
     atoken = require('../models/AccessToken'),
@@ -91,6 +91,17 @@ describe('getUserByPhone',()=>{
 });
 describe('db test',()=>{
     it('find',(done)=>{
+        db.get('ethTransactions').find({to:'0x56cb9adff6b442697b2eb912a73a618a5b3bea8a'},{sort:{created_at:-1}}
+        ,(err,tt)=>{
+          console.dir(tt.map((t) => {
+              return {
+                  timestamp: t.created_at,
+                  from: t.from,
+                  to: t.to,
+                  ammount: t.value
+              }}));
+          done();
+        })
        // db.get('tmpUsers').find({message:'yzjQ'},(err,tmpUser)=>{
        //     console.dir(tmpUser[0].phone);
         //db.get('users').remove({'phone':'+380949506643'},()=>{});
@@ -107,7 +118,7 @@ describe('db test',()=>{
                 done();
             })
         });*/
-        console.log(md5('kPtzIomGfFhUAuxKMjHCQGUCuYrMVlRR'));done();
+        //console.log(md5('kPtzIomGfFhUAuxKMjHCQGUCuYrMVlRR'));done();
        // user.getUserByParam({'phone':'+170949506641'},(u)=>{
             /*db.get('users').remove({'_id':{ }},(err,us)=>{*/
             //console.dir(er);

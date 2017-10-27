@@ -111,7 +111,7 @@ router.get('/transactionsjournal',Auth.jwtAuthentication,(req,res)=>{
         if(usr.error)res.json({tr:0});
         else Accounts.getTransactionsJournal(usr.data._id.toString(),req.web3,(tx)=>{
             if(tx.erorr)res.json({tr:0});
-            else res.json({in: tx.tx, ot: tx.tt});
+            else res.json({ot: tx.tx, in: tx.tt});
         })
     });
     else if(!req.texp)res.json({rt:0});
