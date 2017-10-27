@@ -381,6 +381,8 @@ module.exports =
         },
         verifyPassword:function(pass,user){
             //return pass === vf(user.pwd);
-            return user.pwd.pass === this.decrypt(pass,user.pwd.salt)
+            if(user.pwd)
+            return user.pwd.pass === this.decrypt(pass,user.pwd.salt);
+            else return false;
         },
     };
