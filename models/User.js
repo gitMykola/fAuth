@@ -1,8 +1,7 @@
 /**
  * Created by Nick on 24.07.2017.
  */
-let express = require('express'),
-    mongo = require('mongodb'),
+let
     monk = require('monk'),
     config = require('../services/config'),
     db = monk(config.db.url),
@@ -220,7 +219,7 @@ module.exports =
                             }else if(req.body.s !== md5(tmpUser.data.u1.toString())){
                                 res.resData.rs = 4;
                                 next(res.resData);
-                            }else if((Date.now() - tmpUser.data.created_at) > config.app.tmpUserLive){
+                            }else if((Date.now() - tmpUser.data.created_at) > global.config.app.tmpUserLive){
                                 //console.log((Date.now() - tmpUser.data.created_at));
                                 res.resData.rs = 5;
                                 next(res.resData);
@@ -358,15 +357,15 @@ module.exports =
         encrypt: (password)=>
         {
             let cpass = {};
-            cpass.salt = cryptor.randomBytes(config.crypt.saltLen).toString('hex');
+            cpass.salt = cryptor.randomBytes(global.config.crypt.saltLen).toString('hex');
             /*let cipher = cryptor.createCipher('aes-256-ctr', cpass.salt);
             cpass.pass = cipher.update(password.toString(), 'utf8', 'hex');
             cpass.pass += cipher.final('hex');*/
             cpass.pass = cryptor.pbkdf2Sync(password,
                 cpass.salt,
-                config.crypt.et,
-                config.crypt.keyLen,
-                config.crypt.alg).toString('hex');
+                global.config.crypt.et,
+                global.config.crypt.keyLen,
+                global.config.crypt.alg).toString('hex');
             return cpass;
         },
         decrypt: (cpassword,salt)=>
@@ -376,9 +375,9 @@ module.exports =
             pass += decipher.final('utf8');*/
             return cryptor.pbkdf2Sync(cpassword,
                 salt,
-                config.crypt.et,
-                config.crypt.keyLen,
-                config.crypt.alg).toString('hex');
+                global.config.crypt.et,
+                global.config.crypt.keyLen,
+                global.config.crypt.alg).toString('hex');
         },
         verifyPassword:function(pass,user){
             //return pass === vf(user.pwd);

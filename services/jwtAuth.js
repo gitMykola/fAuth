@@ -71,15 +71,15 @@ module.exports = {
     },
 
     cryptoRSAInit:function(req,res,next){
-        if(!req.body || !req.body.as)next({ac:1});
+        if(!req.body || !req.body.as)next({ac:0});
         else user.getUserByParam({'phone':req.user},usr=>{
-            if(usr.error)next({ac:2});
+            if(usr.error)next({ac:0});
             else {
                 usr.data.publicKey = Buffer.from(req.body.as, 'base64').toString();
                 usr.data.serverRSAKeys = pair();
                 console.dir(usr.data.serverRSAKeys);
                 user.updatePhoneUser(usr.data._id,usr.data,(err,user)=>{
-                    if(err)next({ac:3});
+                    if(err)next({ac:0});
                     else {
                         res.setHeader('access-control-expose-headers', 'res-spk');
                         res.setHeader('res-spk',
@@ -92,7 +92,7 @@ module.exports = {
     },
 
     decryptUserData:function(req,res,next){
-        if(!req.body || !req.body.dt || !req.body.vr) next({ec:1});
+        if(!req.body || !req.body.dt || !req.body.vr) next({ec:0});
         else {
             user.getUserByParam({'phone':req.user},usr=>{
                 if(usr.error)next({ec:0});

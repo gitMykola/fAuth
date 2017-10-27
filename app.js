@@ -27,7 +27,8 @@ let auth = require(__dirname + '/routes/auth'),
 let app = express(),
     startProcess = require(__dirname + '/services/start');
 
-    global.config = config;
+    global.appPath = __dirname;
+    global.config = require(__dirname + '/services/config');
 
     store.on('error', function(error) {console.log(error)});
 

@@ -136,15 +136,30 @@ module.exports = {
         user.getUserAccounts(userId, (ac)=>{
             console.dir(ac);
             if(ac.error || !ac.data.length) next({error:'Account error',data:null});
-            else db.get(this.ethTxCollection).find({},{$or: [{"from":ac.data[0].address},
-                {"to":ac.data[0].address}],
+            else db.get(this.ethTxCollection).find({},{"from":ac.data[0].address,
                 sort:{created_at:-1}},(err,tx)=>{
-                console.dir(tx);
+                //console.dir(tx);
                     if(err) next({error:'TX error!'});
-                    else next({error:null, tx:tx.map((t)=>{return {timestamp:t.created_at,
-                                                                    from:t.from,
-                                                                    to:t.to,
-                                                                    ammount:t.value}})});
+                    else
+                        db.get(this.ethTxCollection).find({},{"to":ac.data[0].address,
+                            sort:{created_at:-1}},(err,tt)=> {
+                            if (err) next({error: 'TX error!'});
+                            else next({
+                                error: null, tx: tx.map((t) => {
+                                    return {
+                                        timestamp: t.created_at,
+                                        to: t.to,
+                                        ammount: t.value
+                                    }
+                                }),tt: tt.map((t) => {
+                                    return {
+                                        timestamp: t.created_at,
+                                        to: t.to,
+                                        ammount: t.value
+                                    }
+                                })
+                            })
+                        })
             })
         })
     },
