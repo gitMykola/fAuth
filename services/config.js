@@ -13,6 +13,7 @@ module.exports = {
         ref30DB:1000*60*5,
         tokenLive:60*60,
         tmpUserLive:60*30*1000,
+        maxContentSize: 1000
     },
     currencies:[
         'BTC',

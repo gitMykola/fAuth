@@ -93,6 +93,9 @@
                     "c7":"http://194.71.227.15/api/v3.0/contacts",
                     "c8":"http://194.71.227.15/api/v3.0/balance",
                     "c9":"http://194.71.227.15/api/v3.0/transactionsjournal"
+                    "c10":"http://194.71.227.15/api/v3.0/cryptoinit",
+                    "c11":"http://194.71.227.15/api/v3.0/receiveAS",
+                    "c12":"http://194.71.227.15/api/v3.0/encryptDA"
                     },
      POST to /phonevalid
         request body:
@@ -213,9 +216,9 @@
                                          }
                  route response:
                         {
-                                "currency": "ETH",
-                                "address": "0x4336121081a46Fd8b4de28BB02aE5b6fDca0168E",
-                                "balance": "1417535234970499667" (in wei)
+                                "cu": "ETH",
+                                "ad": "0x4336121081a46Fd8b4de28BB02aE5b6fDca0168E",
+                                "ba": "1417535234970499667" (in wei)
                             }                        
       POST to /contacts 
                 request
@@ -252,26 +255,45 @@
                               1 (token time less), 
                             }
                          route response:
+                         ot:{
                             [
                                 {
                                     "timestamp": 1508854804352,
-                                    "from": "0x4336121081a46Fd8b4de28BB02aE5b6fDca0168E",
                                     "to": "0x56cb9adff6b442697b2eb912a73a618a5b3bea8a",
                                     "ammount": "3110440005600111"
                                 },
                                 {
                                     "timestamp": 1508854794624,
-                                    "from": "0x4336121081a46Fd8b4de28BB02aE5b6fDca0168E",
                                     "to": "0x56cb9adff6b442697b2eb912a73a618a5b3bea8a",
                                     "ammount": "3200440005600111"
                                 },
                                 {
                                     "timestamp": 1508854768232,
-                                    "from": "0x4336121081a46Fd8b4de28BB02aE5b6fDca0168E",
                                     "to": "0x56cb9adff6b442697b2eb912a73a618a5b3bea8a",
                                     "ammount": "5000440005600111"
                                 }
-                            ]                        
+                            ] 
+                            },
+                         in:{
+                            [
+                                {
+                                    "timestamp": 1508854804352,
+                                    "from": "0x56cb9adff6b442697b2eb912a73a618a5b3bea8a",
+                                    "ammount": "3110440005600111"
+                                },
+                                {
+                                    "timestamp": 1508854794624,
+                                    "from": "0x56cb9adff6b442697b2eb912a73a618a5b3bea8a",
+                                    "ammount": "3200440005600111"
+                                },
+                                {
+                                    "timestamp": 1508854768232,
+                                    "from": "0x56cb9adff6b442697b2eb912a73a618a5b3bea8a",
+                                    "ammount": "5000440005600111"
+                                }
+                             ]    
+                         }   
+                                                   
                               
   ###### database 'crypto'
   ###### collections:
