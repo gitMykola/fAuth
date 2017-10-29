@@ -292,7 +292,65 @@
                                     "ammount": "5000440005600111"
                                 }
                              ]    
-                         }   
+                         } 
+         Post to /cryptoinit
+         request 
+                   header: WWW-Authenticate: Basic token=tk, where token - JSON WEB TOKEN responder by token
+                   
+         body{
+                   as: string (user public RSA key) 
+                             }                       
+         auth response:
+                   {
+                    "rt": 
+                        0 (token wrong),
+                        1 (token time less), 
+                    }
+         route response
+                    header: access-control-expose-headers: res-spk
+                    header: res-spk: string (server RSA public key)
+                    body:          
+                        ac{
+                            0 - error events,
+                            null - keys generation done.
+                        }
+         Post to /receiveAS
+            request 
+                   header: WWW-Authenticate: Basic token=tk, where token - JSON WEB TOKEN responder by token
+            body{
+                   ae: string (user encrypt AES256 key) 
+                }                                
+            auth response:
+                               {
+                                "rt": 
+                                    0 (token wrong),
+                                    1 (token time less), 
+                                }
+                                
+            route response
+                            ac{
+                                    0 - error events,
+                                    null - AES256 key decription done.
+                                }
+         Post to /encryptDA    
+            request 
+                   header: WWW-Authenticate: Basic token=tk, where token - JSON WEB TOKEN responder by token
+            body{
+                    dt: string (user data encrypted by AES256 key)
+                    vr: array of 16 random bytes (AES256 encript initialization vector) 
+                 }                                            
+                   auth response:
+                    {
+                        "rt": 
+                            0 (token wrong),
+                            1 (token time less), 
+                        }
+                    
+                                            response:
+                                            ec{
+                                                0 - error events,
+                                                string - decrypted user data
+                                            }              
                                                    
                               
   ###### database 'crypto'
