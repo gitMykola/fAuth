@@ -91,7 +91,7 @@ describe('getUserByPhone',()=>{
 });
 describe('db test',()=>{
     it('find',(done)=>{
-        db.get('ethTransactions').find({to:'0x56cb9adff6b442697b2eb912a73a618a5b3bea8a'},{sort:{created_at:-1}}
+        /*db.get('ethTransactions').find({to:'0x56cb9adff6b442697b2eb912a73a618a5b3bea8a'},{sort:{created_at:-1}}
         ,(err,tt)=>{
           console.dir(tt.map((t) => {
               return {
@@ -101,7 +101,7 @@ describe('db test',()=>{
                   ammount: t.value
               }}));
           done();
-        })
+        })*/
        // db.get('tmpUsers').find({message:'yzjQ'},(err,tmpUser)=>{
        //     console.dir(tmpUser[0].phone);
         //db.get('users').remove({'phone':'+380949506643'},()=>{});
@@ -152,7 +152,11 @@ describe('db test',()=>{
                 done();
             })
         });*/
-
+        db.get('ethTransactions').remove({$or:[{'to': '0x4336121081a46fd8b4de28bb02ae5b6fdca0168e'},
+            {'from': '0x4336121081a46fd8b4de28bb02ae5b6fdca0168e'}]},(err)=>{
+            console.dir(err);
+            done();
+        })
       //  });
     });
 });

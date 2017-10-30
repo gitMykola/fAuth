@@ -6,7 +6,8 @@ let express = require('express'),
     Personal = require('web3-eth-personal'),
     user = require('../models/User'),
     randStr = require('randomstring'),
-    md5 = require('js-md5');
+    md5 = require('js-md5'),
+    xhr = require('../services/xhr');
 
 module.exports = {
     tempTransaction: 'tmpTX',
@@ -141,27 +142,98 @@ module.exports = {
         user.getUserAccounts(userId, (ac)=>{
             console.dir(ac);
             if(ac.error || !ac.data.length) next({error:'Account error',data:null});
-            else db.get(this.ethTxCollection).find({"from":ac.data[0].address},{
+            else db.get(this.ethTxCollection).find({"from":(ac.data[0].address).toLowerCase()},{
                 sort:{created_at:-1}},(err,tx)=>{
                     if(err) next({error:'TX error!'});
-                    else db.get(this.ethTxCollection).find({"to":ac.data[0].address},{
+                    else db.get(this.ethTxCollection).find({"to":ac.data[0].address.toLowerCase()},{
                             sort:{created_at:-1}},(err,tt)=> {
                             if (err) next({error: 'TX error!'});
-                            else next({
-                                error: null, tx: tx.map((t) => {
-                                    return {
-                                        timestamp: t.created_at,
-                                        to: t.to,
-                                        ammount: t.value
-                                    }
-                                }),tt: tt.map((t) => {
-                                    return {
-                                        timestamp: t.created_at,
-                                        from: t.from,
-                                        ammount: t.value
-                                    }
-                                })
-                            })
+                            else {
+                                let intBalance = 0;
+                                for (let i = 0;i < tx.length;i++)intBalance -= Number (tx[i].value) + Number(tx[i].gasPrice) * Number(tx[i].gasUsed);//console.log(tx[i].value + tx[i].gasPrice * tx[i].gasUsed )}
+                                for (let i = 0;i < tt.length;i++)intBalance += Number (tt[i].value);// - Number(tt[i].gasPrice) * Number(tt[i].gasUsed);//console.log(tt[i].value - tt[i].gasPrice * tt[i].gasUsed)}
+                                console.log('Balance ' + intBalance);
+                                console.log('TX LEN' + tx.length);
+                                console.log('TT LEN' + tt.length);
+                                web3.eth.getBalance(ac.data[0].address,(err,bal)=>{
+                                    if(err)next({error:'Geth error!'});
+                                    else if(Math.round(intBalance/1e6) !== Math.round(bal/1e6)){
+                                       //console.log('Failure! ' + intBalance + ' ' + bal);
+                                       let url = config.etherscan.apiURL
+                                           + '?module=account&action=txlist&address='
+                                           + ac.data[0].address
+                                           + '&startblock='
+                                           + config.etherscan.startBlock
+                                           +'&endblock=99999999&sort=asc&apikey='
+                                           + config.etherscan.apiKey;
+
+                                       console.log(url);
+                                       xhr.get(url)
+                                           .then((response)=> {
+                                               let r = JSON.parse(response);
+                                               //console.dir(r.result);
+                                               if (!r.message || r.message !== 'OK' || !r.result || !r.result.length)
+                                                   next({error: 'Etherscan error!'});
+                                                   else{
+                                                   let txjournal = r.result.map((e) => {
+                                                   return {
+                                                       hash: e.hash,
+                                                       from: e.from,
+                                                       to: e.to,
+                                                       value: e.value,
+                                                       created_at: Number (e.timeStamp) * 1000,
+                                                       gasPrice: e.gasPrice,
+                                                       gasUsed: e.gasUsed
+                                                            }
+                                                        });
+                                                   db.get(this.ethTxCollection).remove({$or:[{'to': ac.data[0].address.toLowerCase()},
+                                                       {'from': ac.data[0].address.toLowerCase()}]},(err)=>{
+                                                      if(err) next({error:'DB error!'});
+                                                      else db.get(this.ethTxCollection).insert(txjournal,(err,txj)=>{
+                                                          if(err)next({error: 'DB error!'});
+                                                          else {
+                                                              let income = [],
+                                                                  outcome = [];
+                                                              //console.dir(txjournal);
+                                                              for(let i = 0; i < txjournal.length; i++)
+                                                                  if(txjournal[i].from === ac.data[0].address.toLowerCase())
+                                                                  outcome.push({
+                                                                      timestamp: txjournal[i].created_at,
+                                                                      to: txjournal[i].to,
+                                                                      ammount: txjournal[i].value,
+                                                                      fee: Number(txjournal[i].gasPrice) * Number(txjournal[i].gasUsed)
+                                                                  }); else income.push({
+                                                                      timestamp: txjournal[i].created_at,
+                                                                      from: txjournal[i].from,
+                                                                      ammount: txjournal[i].value,
+                                                                      fee: Number(txjournal[i].gasPrice) * Number(txjournal[i].gasUsed)
+                                                                  });
+                                                              next({error: null, tx: outcome, tt: income});
+                                                          }
+                                                      })
+                                                   });
+                                                   }
+                                           },(reject)=>{next({error: 'Etherscan Error!'})})
+                                    }else next({
+                                        error: null, tx: tx.map((t) => {
+                                            return {
+                                                timestamp: t.created_at,
+                                                to: t.to,
+                                                ammount: t.value,
+                                                fee: Number(t.gasPrice) * Number(t.gasUsed)
+                                            }
+                                        }),tt: tt.map((t) => {
+                                            return {
+                                                timestamp: t.created_at,
+                                                from: t.from,
+                                                ammount: t.value,
+                                                fee: Number(t.gasPrice) * Number(t.gasUsed)
+                                            }
+                                        })
+                                    })
+                                });
+
+                            }
                         })
             })
         })

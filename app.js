@@ -54,12 +54,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 app.use(function(req,res,next){//console.dir(req.headers['content-length']);
-    if(!req.headers['content-length'] || Number (req.headers['content-length']) > config.app.maxContentSize)
+    //console.log('Request size '+req.socket.bytesRead);
+    if(req.headers['content-length']
+        && Number (req.headers['content-length']) > config.app.maxContentSize
+        || req.socket.bytesRead > config.app.maxContentSize)
     {
         res.status(301);
         res.json({});
     }
-    else
     if (typeof req.web3 !== 'undefined') {
         req.web3 = new Web3(web3.currentProvider);
     } else {

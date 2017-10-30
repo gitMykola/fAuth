@@ -13,7 +13,7 @@ module.exports = {
         ref30DB:1000*60*5,
         tokenLive:60*60,
         tmpUserLive:60*30*1000,
-        maxContentSize: 1000
+        maxContentSize: 1000000
     },
     currencies:[
         'BTC',
@@ -44,4 +44,9 @@ module.exports = {
         'c11':'http://194.71.227.15/api/v3.0/receiveAS',
         'c12':'http://194.71.227.15/api/v3.0/encryptDA'
     },
+    etherscan:{
+        'apiURL':'http://ropsten.etherscan.io/api',
+        'apiKey': 'T4EHH2TB834A11K3BAKC99Z6AS3HURIHNW',
+        'startBlock': '1600000'
+    }
 };
