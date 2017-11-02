@@ -21,7 +21,7 @@ let auth = require(__dirname + '/routes/auth'),
     }),
     Web3 = require('web3'),
     api = require(__dirname + '/routes/api_1_0'),
-    api2 = require(__dirname + '/routes/api_2_0'),
+    api4 = require(__dirname + '/routes/api_4_0'),
     api3 = require(__dirname + '/routes/api_3_0');
 
 let app = express(),
@@ -108,7 +108,7 @@ app.get('/api/userInfo',
       });
       app.use('/api/v3.0', api3);
       app.use('/api/v1.0', api);
-//    app.use('/api/v2.0', api2);
+      app.use('/api/v4.0', api4);
 //    app.use('/auth',auth);
 //    app.use('/users', users);
 
@@ -136,6 +136,6 @@ app.get('/api/userInfo',
 
 // Starting database & global object data refreshing process
 
-// startProcess({ref30DB:config.app.ref30DB});
+   startProcess({ref30DB:config.app.ref30DB});
 
 module.exports = app;

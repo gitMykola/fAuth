@@ -8,7 +8,9 @@ let request = require('supertest'),
     atoken = require('../models/AccessToken'),
     rtoken = require('../models/RefreshToken'),
     app = require('../app'),
-    md5 = require('js-md5');
+    md5 = require('js-md5'),
+    ETHAccounts = require('web3-eth-accounts'),
+    Web3 = require('web3');
 
 describe('Testing cryptocoin api 2.0',()=>{
 
@@ -152,11 +154,22 @@ describe('db test',()=>{
                 done();
             })
         });*/
-        db.get('ethTransactions').remove({$or:[{'to': '0x4336121081a46fd8b4de28bb02ae5b6fdca0168e'},
+        /*db.get('ethTransactions').remove({$or:[{'to': '0x4336121081a46fd8b4de28bb02ae5b6fdca0168e'},
             {'from': '0x4336121081a46fd8b4de28bb02ae5b6fdca0168e'}]},(err)=>{
             console.dir(err);
             done();
-        })
+        })*/
+
+        let web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        if(!web3.isConnected())
+            console.log("not connected");
+        else
+            console.log("connected");
+        let acc = new ETHAccounts(web3.currentProvider);
+        let ac = acc.create();
+        console.dir(ac);
+        done();
+
       //  });
     });
 });
