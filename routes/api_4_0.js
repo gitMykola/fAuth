@@ -10,4 +10,8 @@ router.post('/ETH/createAccount',(req,res)=>{
         res.json(data);
     })
 });
+router.get('/ETH/balance/:address',(req,res)=>{});
+router.get('/ETH/transactionsList/:address',(req,res)=>{});
+router.get('/ETH/transactionByHash/:hash',(req,res)=>{});
+router.get('/ETH/sendRawTransaction/:hex',(req,res)=>{});
 module.exports = router;
