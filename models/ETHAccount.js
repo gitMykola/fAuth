@@ -2,11 +2,12 @@ let express = require('express'),
     config = require('../services/config'),
     db = require('../services/db'),
     ETHAccounts = require('web3-eth-accounts'),
+    Tx = require('ethereumjs-tx'),
     user = require('../models/User');
 
 module.exports = {
     createETHAccountWithPassword:function(req,res,next){
-        if(!this.dataValidate(req.body)) {
+        if(!this.dataValidate(req.body) || !req.body.ps) {
             res.status(417);
             next(null);
         }else{
@@ -19,6 +20,22 @@ module.exports = {
                 next(ethAccount);
             }
             catch(err){
+                console.log(err);
+                res.status(503);
+                next(null);
+            }
+        }
+    },
+    sendRawTransaction:function(req,res,next){
+        if(!this.dataValidate(req.params) || !req.params.hs){
+            res.status(417);
+            next(null);
+        }else{
+            try{
+                req.web3.sendSignedTransaction(req.params.hs)
+                    .then(reciept=>next(reciept));
+            }catch(err){
+                console.log(err);
                 res.status(503);
                 next(null);
             }
