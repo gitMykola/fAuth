@@ -33,13 +33,45 @@ module.exports = {
         }else{
             try{
                 req.web3.sendSignedTransaction(req.params.hs)
-                    .then(reciept=>next(reciept));
+                    .then(hash=>next({tx:hash}));
             }catch(err){
                 console.log(err);
                 res.status(503);
                 next(null);
             }
         }
+    },
+    getBalance:function(req,res,next){
+        if(!this.dataValidate(req.params) || !req.params.ad){
+            res.status(417);
+            next(null);
+        }else{
+            try{
+                req.web3.eth.getBalance(req.params.ad)
+                    .then(balance=>next({bc:balance}));
+            }catch(err){
+                console.log(err);
+                res.status(503);
+                next(null);
+            }
+        }
+    },
+    getTransactionByHash:function(req,res,next){
+        if(!this.dataValidate(req.params) || !req.params.hs){
+            res.status(417);
+            next(null);
+        }else{
+            try{
+                req.web3.eth.getTransactions(req.params.hs,tx=>next(tx))
+            }catch(err){
+                console.log(err);
+                res.status(503);
+                next(null);
+            }
+        }
+    },
+    getTransactionsList:function(req,res,next){
+
     },
     dataValidate:function(data){
         if(typeof data !== 'object') return false;
